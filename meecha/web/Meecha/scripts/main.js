@@ -94,7 +94,9 @@ function connect_ws() {
     }
 }
 
-connect_ws();
+window.addEventListener("load",function(evt){
+    connect_ws();
+})
 
 //サーバーにコマンドを送信する
 function send_command(command,data) {
