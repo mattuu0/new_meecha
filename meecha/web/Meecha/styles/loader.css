@@ -1,3 +1,7 @@
+#main_content {
+    z-index: 0;
+}
+
 /* ローディング画面 */
 #loading {
     width: 100vw;
@@ -8,6 +12,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 100;
 }
 .spinner {
     width: 100px;

@@ -1,174 +1,174 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'meecha/styles/setting.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定</title>
 
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-  <script src="{% static 'meecha/scripts/check_mobile.js' %}"></script>
-  <script src="{% static 'meecha/scripts/toastr.min.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'meecha/styles/toastr.min.css' %}">
-  <title>設定</title>
-
+    <link rel="stylesheet" href="./styles/loader.css">
 </head>
+
 <body>
-  {% csrf_token %}
-
-  <header>
-    <a href="/meecha">
-      <img src="{% static 'meecha/images/meecha.png' %}" alt="" id="rogo">
-    </a>
-  </header>
-  <main>
-    
-    {% if request.user.is_authenticated %}
-      <div class="user_info">
-        <img src="{% static 'meecha/images/icon.jpg' %}" alt="" >
-        <p>{{ request.user.username }}</p>
-      </div>
-      {% else %}
-        <p>ログインしていません</p>
-      {% endif %}
-
-    <div class="set">
-
-      <div class="distance menu">
-        <div class="setting_elements">
-          <img src="{% static 'meecha/images/distance.png' %}" alt="">
-        </div>
-        <button id="setting_notify_distance" class="setting_notify_distance">通知する距離</button>
-      </div>
-
-      <div id="setting_distance_area" class="popup">
-        <div class="popup_inner">
-          <div id="setting_distance" class="popover">
-            <p id="distance_show">現在は()mで通知します</p>
-            <select name="distances" class="distanec_select" id="notify_distances_select">
-              <option hidden>通知する距離を選択 (m)</option>
-              <option value="5">  5   m</option>
-              <option value="10">  10   m</option>
-              <option value="50">  50   m</option>
-              <option value="250"> 250  m</option>
-              <option value="500"> 500  m</option>
-              <option value="1000">1000 m</option>
-              <option value="3000">3000 m</option>
-              <option value="5000">5000 m</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="password menu">
-        <div class="setting_elements"><img src="{% static 'meecha/images/password.png' %}" alt=""></div>
-        <div ><a href="/accounts/password/change/">パスワード変更</a></div>
-      </div>
-      
-      <div class="logout menu">
-        <div class="setting_elements"><img src="{% static 'meecha/images/logout.png' %}" alt=""></div>
-        <div><a href="/accounts/logout">ログアウト</a></div>
-      </div>
-
+    <div id="loading">
+        <div class="spinner"></div>
     </div>
 
-    <div class="friends menu">
-      <div class="setting_elements"><img src="{% static 'meecha/images/friends.png' %}" alt=""></div>
-      <div>フレンド</div>
+    <div id="main_content" style="visibility: hidden;">
+        <header>
+            <a href="/meecha">
+                <img src="./images/meecha.png" alt="" id="rogo">
+            </a>
+        </header>
+        <main>
+            <div class="user_info">
+                <img src="./images/icon.jpg" alt="">
+                <p>dev user</p>
+            </div>
+
+            <div class="set">
+
+                <div class="distance menu">
+                    <div class="setting_elements">
+                        <img src="./images/distance.png" alt="">
+                    </div>
+                    <button id="setting_notify_distance" class="setting_notify_distance">通知する距離</button>
+                </div>
+
+                <div id="setting_distance_area" class="popup">
+                    <div class="popup_inner">
+                        <div id="setting_distance" class="popover">
+                            <p id="distance_show">現在は()mで通知します</p>
+                            <select name="distances" class="distanec_select" id="notify_distances_select">
+                                <option hidden>通知する距離を選択 (m)</option>
+                                <option value="5"> 5 m</option>
+                                <option value="10"> 10 m</option>
+                                <option value="50"> 50 m</option>
+                                <option value="250"> 250 m</option>
+                                <option value="500"> 500 m</option>
+                                <option value="1000">1000 m</option>
+                                <option value="3000">3000 m</option>
+                                <option value="5000">5000 m</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="password menu">
+                    <div class="setting_elements"><img src="./images/password.png" alt=""></div>
+                    <div><a href="/accounts/password/change/">パスワード変更</a></div>
+                </div>
+
+                <div class="logout menu">
+                    <div class="setting_elements"><img src="./images/logout.png" alt=""></div>
+                    <div><a href="/accounts/logout">ログアウト</a></div>
+                </div>
+
+            </div>
+
+            <div class="friends menu">
+                <div class="setting_elements"><img src="./images/friends.png" alt=""></div>
+                <div>フレンド</div>
+            </div>
+            <div id="friends_area">
+                <div class="friends_button">
+                    <div>
+                        <button id="get_friends_button" class="button_radius">
+                            フレンド一覧
+                        </button>
+                    </div>
+
+                    <div>
+                        <button id="search_user_button" class="button_radius">
+                            ユーザー検索
+                        </button>
+                    </div>
+
+                    <div>
+                        <button id="get_request_button" class="button_radius">
+                            受信済み
+                        </button>
+                    </div>
+
+                    <div>
+                        <button id="sended_request_button" class="button_radius">
+                            送信済み
+                        </button>
+                    </div>
+
+                </div>
+
+                <div id="show_recved_request_area" class="popup">
+                    <div class="popup_inner">
+                        <div id="recved_request_area" class="popover">
+                            <p>受信済みリクエスト</p>
+                            <div id="recved_request_show_area">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="show_sended_request_area" class="popup">
+                    <div class="popup_inner">
+                        <div id="sended_request_area" class="popover">
+                            <p>送信済みリクエスト</p>
+                            <div id="sended_request_show_area">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pupup_friends_show_area" class="popup">
+                    <div class="popup_inner">
+                        <div id="friends_area" class="popover">
+                            <p>フレンド一覧</p>
+                            <div id="friends_show_area">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="pupup_search_area" class="popup">
+                    <div class="popup_inner">
+                        <div id="user_search_area_popover" class="popover">
+
+                            <div class="user_search_area">
+                                <input type="text" placeholder="ユーザー名" id="search_username_value">
+                                <button id="user_search_button">検索</button>
+                                <button id="search_clear_btn">クリア</button>
+                            </div>
+                            <div id="user_searh_result">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <a href="/meecha"><img src="./images/arrow.png" alt="" class="arrow"></a>
+        </footer>
     </div>
     
-  </div>
+    <link rel="stylesheet" href="./styles/setting.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="./scripts/check_mobile.js"></script>
+    <script src="./scripts/toastr.min.js"></script>
+    <link rel="stylesheet" href="./styles/toastr.min.css">
 
-  <div>
-    <div id="friends_area">          
-      <div class="friends_button">
-          <div>
-              <button id="get_friends_button" class="button_radius">
-                  フレンド一覧
-              </button>
-          </div>
+    <script src="./scripts/js.cookie.min.js"></script>
+    <script src="./leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="./leaflet/leaflet.css">
+    <link rel="stylesheet" href="./styles/popup.css">
+    <script src="./scripts/setting.js"></script>
+    <script src="./scripts/popup.js"></script>
 
-          <div>
-              <button id="search_user_button" class="button_radius">
-                  ユーザー検索
-              </button>
-          </div>
-
-          <div>
-              <button id="get_request_button" class="button_radius">
-                  受信済み
-              </button>
-          </div>
-      
-          <div>
-              <button id="sended_request_button" class="button_radius">
-                  送信済み
-              </button>
-          </div>
-
-      </div>
-
-      <div id="show_recved_request_area" class="popup">
-        <div class="popup_inner">
-          <div id="recved_request_area" class="popover">
-            <p>受信済みリクエスト</p>
-            <div id="recved_request_show_area">
-              
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="show_sended_request_area" class="popup">
-        <div class="popup_inner">
-          <div id="sended_request_area" class="popover">
-              <p>送信済みリクエスト</p>
-              <div id="sended_request_show_area">
-
-              </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="pupup_friends_show_area" class="popup">
-        <div class="popup_inner">
-          <div id="friends_area" class="popover">
-            <p>フレンド一覧</p>
-            <div id="friends_show_area">
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      
-      <div id="pupup_search_area" class="popup">
-        <div class="popup_inner">
-          <div id="user_search_area_popover" class="popover">
-            
-            <div class="user_search_area">
-              <input type="text" placeholder="ユーザー名" id="search_username_value">
-              <button id="user_search_button">検索</button>
-              <button id="search_clear_btn">クリア</button>
-            </div>
-            <div id="user_searh_result">
-          
-            </div>
-          </div>
-        </div>
-      </div>
-  </div>
-  </main>
-
-  <footer>
-    <a href="/meecha"><img src="{% static 'meecha/images/arrow.png' %}" alt="" class="arrow"></a>
-  </footer>
-  
-  
-  <script src="{% static 'meecha/scripts/js.cookie.min.js' %}"></script>
-  <script src="{% static 'meecha/leaflet/leaflet.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'meecha/leaflet/leaflet.css' %}">
-  <link rel="stylesheet" href="{% static 'meecha/styles/popup.css' %}">
-  <script src="{% static 'meecha/scripts/setting.js' %}"></script>
-  <script src="{% static 'meecha/scripts/popup.js' %}"></script>
+    <script src="./scripts/loader.js"></script>
 </body>
+
 </html>
