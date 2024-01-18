@@ -1,0 +1,12 @@
+version: '3'
+services:
+    meecha:
+        image: golang:1.20.13-bullseye
+        ports:
+            - 8080:80
+        volumes:
+            - ./meecha:/root/meecha
+        tty: true
+        restart: always
+
+    
