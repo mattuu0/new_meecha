@@ -3,7 +3,6 @@ package auth
 import (
 	"crypto/sha512"
 	"encoding/hex"
-	"log"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -20,6 +19,11 @@ var (
 	dbconn *gorm.DB
 	isinit bool = false
 )
+
+type FindResult struct {
+	IsFind bool
+	User database.User
+}
 
 //初期化
 func Init() error {
@@ -99,13 +103,16 @@ func CreateUser(username string,password string) (database.User,error) {
 }
 
 //ユーザ名でユーザを取得する
-func GetUser_ByName(uname string) (database.User,error) {
+func GetUser_ByName(uname string) (FindResult,error) {
 	//空のユーザを作成する
 	user := database.User{}
 
+	//結果
+	result := FindResult{IsFind: false,User: user}
+
 	//初期化されていなかったらエラー
 	if !isinit {
-		return user,Get_Init_Error()
+		return result,Get_Init_Error()
 	}
 
 	//名前を設定する
@@ -113,10 +120,13 @@ func GetUser_ByName(uname string) (database.User,error) {
 
 	//ユーザを取得する
 	if err := dbconn.First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Println("error detected! ErrRecordNotFound")
+		return result,gorm.ErrRecordNotFound
 	}
 
-	return user,nil
+	//見つかった設定にする
+	result.IsFind = true
+
+	return result,nil
 }
 
 //ぱすわーどをハッシュ化する

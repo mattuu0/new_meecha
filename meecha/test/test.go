@@ -14,8 +14,14 @@ func main() {
 
 	auth.Init()
 
-	_, err := auth.CreateUser("mattuu", "password")
-	log.Println(err)
+	/*
+		_, err := auth.CreateUser("mattuu", "password")
+		log.Println(err)
+	*/
 
-	auth.GetUser_ByName("mattuu")
+	result, _ := auth.GetUser_ByName("mattuu")
+
+	if result.IsFind {
+		log.Println("見つかりました")
+	}
 }

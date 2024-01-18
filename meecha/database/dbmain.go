@@ -2,7 +2,7 @@ package database
 
 import (
 	"gorm.io/gorm"
-  	"gorm.io/driver/sqlite"
+	"gorm.io/driver/sqlite"
 )
 
 var (
@@ -25,6 +25,14 @@ func Init() error {
 
 	//マイグレーション
 	err = dbconn.AutoMigrate(&User{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
+	//マイグレーション
+	err = dbconn.AutoMigrate(&Tokens{})
 
 	//エラー処理
 	if err != nil {
