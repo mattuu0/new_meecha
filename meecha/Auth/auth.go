@@ -103,13 +103,66 @@ func SecurePass(password string) (string,error) {
 	return string(hashed),nil
 }
 
-/*
 //ログイン
 func Login(uname string,password string) (LoginResult,error) {
 	//ログイン結果
-	result := LoginResult{IsFind: false}
+	result := LoginResult{IsFind: false,Success: false}
 
-	_ = result
+	//ログイン対象ユーザ
+	target_user,err := GetUser_ByName(uname)
+
+	//エラー処理
+	if err != nil {
+		return result,err
+	}
+
+	//パウワード検証
+	err = valid_pass([]byte(password),target_user.UserData.HashPass)
+
+	//エラー処理
+	if err != nil {
+		return result,nil
+	}
+
+	//ユーザID
+	uid := target_user.UserData.UID
+
+	//ユーザIDからリフレッシュトークンID取得
+	rtokenid,err := Get_Token_ByUID(uid)
+
+	//エラー処理
+	if err != nil {
+		return result,err
+	}
+
+	//既存のトークン無効化
+	if rtokenid != "" {
+		//トークンを無効化出来ない場合エラー
+		if err := DisableRToken(rtokenid); err != nil {
+			return result,err
+		}
+	}	
+
+	//リフレッシュトークン作成
+	tokens,err := Gen_Refresh_Token(uid)
+
+	//エラー処理
+	if err != nil {
+		return result,err
+	}
+
+	//トークン設定
+	result.AccessToken = tokens.AccessToken
+	result.RefreshToken = tokens.RefreshToken
+
+	//成功にする
+	result.Success = true
+	result.IsFind = true
+
+	return result,nil
 }
 
-*/
+//ぱすわーどを検証する
+func valid_pass(password []byte,hashpass string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashpass),password)
+}

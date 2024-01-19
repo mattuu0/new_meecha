@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"meecha/auth"
+	"meecha/Auth"
 	"meecha/database"
 )
 
@@ -25,6 +25,12 @@ func main() {
 		return
 	}
 
-	log.Println(result.UserData.UID)
+	lresult,err := auth.Login("mattuu","password")
 
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println(lresult)
 }

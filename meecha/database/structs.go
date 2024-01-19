@@ -1,7 +1,5 @@
 package database
 
-import "gorm.io/gorm"
-
 //ユーザーアカウント
 type User struct {
 	UID  string `gorm:"primaryKey"` //ユーザID
@@ -12,7 +10,6 @@ type User struct {
 
 //アクセストークン
 type AccessToken struct {
-	gorm.Model
 	TokenID string `gorm:"primaryKey"` //トークンID
 	UID     string //トークンのユーザID
 	Exp     int64  //トークンの有効期限
@@ -20,7 +17,6 @@ type AccessToken struct {
 
 //アクセストークン
 type RefreshToken struct {
-	gorm.Model
 	TokenID  string `gorm:"primaryKey"` //トークンID
 	UID      string //トークンのユーザID
 	AccessID string //アクセストークンID
