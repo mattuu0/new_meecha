@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"meecha/Auth"
+	auth "meecha/Auth"
 	"meecha/database"
 )
 
@@ -17,7 +17,7 @@ func main() {
 	if !fresult.IsFind {
 		_, err := auth.CreateUser("mattuu", "password")
 		log.Println(err)
-	}	
+	}
 
 	result, _ := auth.GetUser_ByName("mattuu")
 
@@ -25,12 +25,31 @@ func main() {
 		return
 	}
 
-	lresult,err := auth.Login("mattuu","password")
+	lresult, err := auth.Login("mattuu", "password")
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	log.Println(lresult)
+	token_data, err := auth.Valid_Token(lresult.RefreshToken)
+
+	if err != nil {
+		log.Println("トークンの検証に失敗しました")
+		log.Println(err)
+		return
+	}
+
+	log.Println("トークン検証成功")
+
+	log.Println(auth.Logout(lresult.RefreshToken))
+
+	token_data, err = auth.Valid_Token(lresult.AccessToken)
+
+	if err != nil {
+		log.Println("トークンの検証に失敗しました")
+		return
+	}
+
+	log.Println(token_data.Userid)
 }

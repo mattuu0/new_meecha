@@ -3,7 +3,6 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"log"
 	"meecha/database"
 	"time"
 
@@ -125,9 +124,6 @@ func register_token(uid string, AccessId string, RefreshId string, exp int64) er
 	dbconn.Create(&Atoken)
 	dbconn.Create(&Rtoken)
 
-	//コミットする
-	//dbconn.commit()
-
 	return nil
 }
 
@@ -146,7 +142,6 @@ func DisableRToken(tokenid string) error {
 
 	//トークンが見つからない場合戻る
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		log.Println("Token Not found")
 		return nil
 	}
 
@@ -160,9 +155,6 @@ func DisableRToken(tokenid string) error {
 
 	//トークン削除
 	dbconn.Unscoped().Delete(&filter_token)
-
-	//コミットする
-	//dbconn.commit()
 
 	return nil
 }
@@ -189,62 +181,21 @@ func Get_Token_ByUID(uid string) (string, error) {
 	return rtoken_filter.TokenID, nil
 }
 
-// トークンをバリデーション (ユーザID,トークンID,エラー) を返す
-func Valid_Token(token_str string) (TokenResult, error) {
-	//結果
-	tresult := TokenResult{
-		Tokenid: "",
-		Userid: "",
-		IsRefresh: false,
-	}
-
-	//パース
+// トークンをバリデーション
+func Valid_Token(token_str string, IsRefresh bool) (string, error) {
+	//
 	token, err := jwt.Parse(token_str, func(token *jwt.Token) (interface{}, error) {
-		//署名方法確認
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		//鍵を返す
 		return Secret, nil
 	})
 
-	//Claimをデコード
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		//トークンID
-		tokenid := string(claims["tokenid"].(string))
-
-		var result *gorm.DB
-
-		//アクセストークンかどうか
-		if claims["IsAccess"].(bool) {
-			//リフレッシュトークンフィルター
-			Atoken_filter := database.AccessToken{UID: tokenid}
-
-			//トークン取得
-			result = dbconn.First(&Atoken_filter)
-		} else {
-			//リフレッシュトークンフィルター
-			rtoken_filter := database.RefreshToken{UID: tokenid}
-
-			//トークン取得
-			result = dbconn.First(&rtoken_filter)
-		}
-
-		//見つからない場合も
-		//エラー処理
-		if result.Error != nil {
-			log.Println(result.Error)
-			return tresult, result.Error
-		}
-
-		tresult.Userid = string(claims["userid"].(string))
-		tresult.IsRefresh = !claims["IsAccess"].(bool)
-		tresult.Tokenid = string(claims["tokenid"].(string))
-
-		return tresult, nil
+		fmt.Printf("user_id: %v\n", string(claims["user_id"].(string)))
+		fmt.Printf("exp: %v\n", int64(claims["exp"].(float64)))
 	} else {
-		//検証に失敗したらエラーを返す
-		return tresult, err
+		fmt.Println(err)
 	}
 }

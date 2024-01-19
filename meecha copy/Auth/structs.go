@@ -14,13 +14,6 @@ type FindResult struct {
 	UserData database.User
 }
 
-// 検索結果
-type TokenResult struct {
-	IsRefresh bool   //リフレッシュトークンか
-	Userid    string //ユーザID
-	Tokenid   string //トークンID
-}
-
 // ログイン結果
 type LoginResult struct {
 	Success bool //成功したか
