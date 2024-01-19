@@ -102,11 +102,6 @@ func Gen_Refresh_Token(uid string) (Tokens, error) {
 
 // トークンを登録する
 func register_token(uid string, AccessId string, RefreshId string, exp int64) error {
-	//初期化されていなかったらエラーを返す
-	if !isinit {
-		return init_error()
-	}
-
 	//アクセストークンの情報
 	Atoken := database.AccessToken{
 		UID:     uid,
@@ -139,10 +134,10 @@ func DisableRToken(tokenid string) error {
 	}
 
 	//トークン
-	filter_token := database.RefreshToken{TokenID: tokenid}
+	filter_token := database.RefreshToken{}
 
 	//トークン取得
-	result := dbconn.Preload(clause.Associations).First(&filter_token)
+	result := dbconn.Preload(clause.Associations).First(&filter_token,database.RefreshToken{TokenID: tokenid})
 
 	//トークンが見つからない場合戻る
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -156,10 +151,10 @@ func DisableRToken(tokenid string) error {
 	}
 
 	//アクセストークン削除
-	dbconn.Unscoped().Delete(&database.AccessToken{TokenID: filter_token.AccessID})
+	dbconn.Unscoped().Delete(&database.AccessToken{},&database.AccessToken{TokenID: filter_token.AccessID})
 
 	//トークン削除
-	dbconn.Unscoped().Delete(&filter_token)
+	dbconn.Unscoped().Delete(&filter_token,database.RefreshToken{TokenID: tokenid})
 
 	//コミットする
 	//dbconn.commit()
@@ -170,10 +165,10 @@ func DisableRToken(tokenid string) error {
 // ユーザIDからリフレッシュトークンID取得
 func Get_Token_ByUID(uid string) (string, error) {
 	//リフレッシュトークンフィルター
-	rtoken_filter := database.RefreshToken{UID: uid}
+	rtoken_filter := database.RefreshToken{}
 
 	//トークン取得
-	Rresult := dbconn.First(&rtoken_filter)
+	Rresult := dbconn.First(&rtoken_filter,database.RefreshToken{UID: uid})
 
 	//トークンが見つからない場合戻る
 	if errors.Is(Rresult.Error, gorm.ErrRecordNotFound) {
@@ -219,16 +214,16 @@ func Valid_Token(token_str string) (TokenResult, error) {
 		//アクセストークンかどうか
 		if claims["IsAccess"].(bool) {
 			//リフレッシュトークンフィルター
-			Atoken_filter := database.AccessToken{UID: tokenid}
+			Atoken_filter := database.AccessToken{}
 
 			//トークン取得
-			result = dbconn.First(&Atoken_filter)
+			result = dbconn.First(&Atoken_filter,database.AccessToken{TokenID: tokenid})
 		} else {
 			//リフレッシュトークンフィルター
-			rtoken_filter := database.RefreshToken{UID: tokenid}
+			rtoken_filter := database.RefreshToken{}
 
 			//トークン取得
-			result = dbconn.First(&rtoken_filter)
+			result = dbconn.First(&rtoken_filter,database.RefreshToken{TokenID: tokenid})
 		}
 
 		//見つからない場合も

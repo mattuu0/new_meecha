@@ -70,7 +70,7 @@ func GetUser_ByName(uname string) (FindResult, error) {
 	}
 
 	//ユーザを取得する
-	find_result := dbconn.Preload(clause.Associations).First(&fuser, "name = ?", uname)
+	find_result := dbconn.Preload(clause.Associations).First(&fuser,&database.User{Name: uname})
 
 	if err := find_result.Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, gorm.ErrRecordNotFound
