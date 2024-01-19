@@ -32,7 +32,15 @@ func Init() error {
 	}
 
 	//マイグレーション
-	err = dbconn.AutoMigrate(&Tokens{})
+	err = dbconn.AutoMigrate(&AccessToken{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
+	//マイグレーション
+	err = dbconn.AutoMigrate(&RefreshToken{})
 
 	//エラー処理
 	if err != nil {

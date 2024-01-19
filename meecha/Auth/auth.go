@@ -1,65 +1,20 @@
 package auth
 
 import (
-	"crypto/sha512"
-	"encoding/hex"
-
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"meecha/database"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"errors"
 )
 
 var (
 	Cost int = 10
-	dbconn *gorm.DB
-	isinit bool = false
 )
 
-type FindResult struct {
-	IsFind bool
-	User database.User
-}
-
-//初期化
-func Init() error {
-	//データベースが初期化されているか
-	if !database.IsInit {
-		//初期化されていなかったらエラーを返す
-		return errors.New("database not initialized")
-	}
-
-	//データベース接続を取得
-	dbconn = database.GetDB()
-
-	//初期化済みにする
-	isinit = true
-
-	return nil
-}
-
-// IDを生成する
-func genid() (string, error) {
-
-	//UUIDを生成する
-	uuid_obj, err := uuid.NewRandom()
-
-	//エラー処理
-	if err != nil {
-		return "", err
-	}
-
-	//UUID文字列をSHA512文字列にする
-	hash_byte := sha512.Sum512([]byte(uuid_obj.String()))
-	hex_string := hex.EncodeToString(hash_byte[:])
-
-	//文字列を返す
-	return hex_string, nil
-}
 
 //ユーザを作成する
 func CreateUser(username string,password string) (database.User,error) {
@@ -72,7 +27,7 @@ func CreateUser(username string,password string) (database.User,error) {
 	}
 
 	//IDを生成する
-	uid,err := genid()
+	uid,err := Genid()
 
 	//エラー処理
 	if err != nil {
@@ -96,7 +51,7 @@ func CreateUser(username string,password string) (database.User,error) {
 	dbconn.Create(&user)
 
 	//コミットする
-	dbconn.Commit()
+	//dbconn.Commit()
 
 	//ユーザデータを返す
 	return user,nil
@@ -105,26 +60,28 @@ func CreateUser(username string,password string) (database.User,error) {
 //ユーザ名でユーザを取得する
 func GetUser_ByName(uname string) (FindResult,error) {
 	//空のユーザを作成する
-	user := database.User{}
+	fuser := database.User{}
 
 	//結果
-	result := FindResult{IsFind: false,User: user}
+	result := FindResult{IsFind: false}
 
 	//初期化されていなかったらエラー
 	if !isinit {
 		return result,Get_Init_Error()
 	}
 
-	//名前を設定する
-	user.Name = uname
-
 	//ユーザを取得する
-	if err := dbconn.First(&user).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+	find_result := dbconn.Preload(clause.Associations).First(&fuser,"name = ?",uname)
+	
+	if err := find_result.Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return result,gorm.ErrRecordNotFound
 	}
-
+	
 	//見つかった設定にする
 	result.IsFind = true
+
+	//情報をセットする
+	result.UserData = fuser
 
 	return result,nil
 }
@@ -146,7 +103,13 @@ func SecurePass(password string) (string,error) {
 	return string(hashed),nil
 }
 
-//初期化されていないエラーを返す
-func Get_Init_Error() error {
-	return errors.New("not initialized")
+/*
+//ログイン
+func Login(uname string,password string) (LoginResult,error) {
+	//ログイン結果
+	result := LoginResult{IsFind: false}
+
+	_ = result
 }
+
+*/
