@@ -192,7 +192,7 @@ func Valid_Token(token_str string) (TokenResult, error) {
 		Userid: "",
 		IsRefresh: false,
 	}
-
+	
 	//パース
 	token, err := jwt.Parse(token_str, func(token *jwt.Token) (interface{}, error) {
 		//署名方法確認
@@ -203,6 +203,11 @@ func Valid_Token(token_str string) (TokenResult, error) {
 		//鍵を返す
 		return Secret, nil
 	})
+
+	//エラー処理
+	if err != nil {
+		return tresult,err
+	}
 
 	//Claimをデコード
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {

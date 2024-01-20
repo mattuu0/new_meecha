@@ -20,6 +20,11 @@ func main() {
 	auth.Init()
 
 	router := gin.Default()
+	
+	//ミドルウェア設定
+	auth.Auth_Init(router)
+	router.Use(auth.Auth_Middleware())
+
 	router.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "pong",
