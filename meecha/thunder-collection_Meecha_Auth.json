@@ -1,0 +1,95 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Meecha_Auth",
+    "dateExported": "2024-01-21T09:44:21.997Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "37656d6b-9340-4d46-898d-e239a2aa88a3",
+            "colId": "0780c13b-2302-4bf0-9e59-e85b1c99e870",
+            "containerId": "",
+            "name": "login",
+            "url": "http://127.0.0.1:12222/auth/login",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-01-21T09:43:37.781Z",
+            "modified": "2024-01-21T09:43:37.781Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJJc0FjY2VzcyI6dHJ1ZSwiZXhwIjoxNzA2MDg3ODU0LCJ0b2tlbmlkIjoiNjBhMTBkMWFjYzY3OWZmODc3YWZkODU0NzlmMmRlZTI0MGJlYjIzODRkMGRjZTVlM2ZlMTMzMGViOTlkZWVlMzNjZTEwNzg3NDk1MWMzMjBhNGQ2Yzk3OWU4MWQzOTg4MzAyZTVjMmNiMTM1ZDcxYjdkYjNmNjA1NjBkNTIyNmIiLCJ1c2VyaWQiOiIzODU2N2ZkOTFiOWUyY2Y2NjA5MGVkZDJmNmQ3NzIzNmRlMjU2ZTYzMTBmZjc4MzFiZDg5OGJhNmJhMTNmMThlODEyZWEyMzgzNWQ0NTVmMjFmNGFjMGY3MTFmMGJkMjZkZDY5NmIyNTgzNjNkNDdlODI3MjRhYzU3ZDE5NmMwYSJ9.BB8yoRLZyMfC6jO2-j9rM_G5QJg1yftmQ068WJxXFEHn7Pf-TlOg6fdL1OLVdMxf2xjCdMB7o0SLqu5h4vCZYQ"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\" : \"mattuu\",\n  \"password\" : \"password\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "f33c80ef-0c4a-44d8-84d6-70115aa49af9",
+            "colId": "0780c13b-2302-4bf0-9e59-e85b1c99e870",
+            "containerId": "",
+            "name": "logout",
+            "url": "http://127.0.0.1:12222/auth/logout",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-01-21T09:43:45.200Z",
+            "modified": "2024-01-21T09:43:45.200Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJJc0FjY2VzcyI6ZmFsc2UsInRva2VuaWQiOiI2ZWUxNDZkN2YwYTVmNGZkMWNkNzBkN2ViYzlmZTc2ZjkxYWNiMGQzZjRhNDJiNTI5ZGZlNGRkNjNjNjYyNDM0OTlhYzNhMTUyNzEwYTdkYzZkMDkzMzdhYmFmMzczZGY5OGI1Y2E1MTM5ZWFmZGE0NmNiOTFlMDgzNDQ2NDQ2YSIsInVzZXJpZCI6IjM4NTY3ZmQ5MWI5ZTJjZjY2MDkwZWRkMmY2ZDc3MjM2ZGUyNTZlNjMxMGZmNzgzMWJkODk4YmE2YmExM2YxOGU4MTJlYTIzODM1ZDQ1NWYyMWY0YWMwZjcxMWYwYmQyNmRkNjk2YjI1ODM2M2Q0N2U4MjcyNGFjNTdkMTk2YzBhIn0.3hlATuG1hGxrgLRNpOwQuOp6cXdhss38W8aixsnr-cDyHAvHCpe62Og83A67m4CICCIRZejX-gcA1i2EMsbHdg"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\" : \"mattuu\",\n  \"password\" : \"password\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "8af636d3-7d40-4752-aae2-26ba87dc0f2a",
+            "colId": "0780c13b-2302-4bf0-9e59-e85b1c99e870",
+            "containerId": "",
+            "name": "ping",
+            "url": "http://127.0.0.1:12222/ping",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-01-21T09:43:51.538Z",
+            "modified": "2024-01-21T09:43:51.538Z",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJJc0FjY2VzcyI6dHJ1ZSwiZXhwIjoxNzA2MDg5MjM0LCJ0b2tlbmlkIjoiZGNmNDY5MWE5YjBkNmE0Mjc4MTA4Nzg5MjY0MjU1NzcxZTJhYjQyN2IyNDQ4MDViZWYyNTdhYzI1YjUwZGNhYzU1Y2M4ZmEyMTRhYzYyYWY1NGNiYTVkZGY3NjNiN2M0NzAxOTYzMmIyZmQyMmI4ZjUwYmY0NDUyYzc3NTQxODgiLCJ1c2VyaWQiOiIzODU2N2ZkOTFiOWUyY2Y2NjA5MGVkZDJmNmQ3NzIzNmRlMjU2ZTYzMTBmZjc4MzFiZDg5OGJhNmJhMTNmMThlODEyZWEyMzgzNWQ0NTVmMjFmNGFjMGY3MTFmMGJkMjZkZDY5NmIyNTgzNjNkNDdlODI3MjRhYzU3ZDE5NmMwYSJ9.p5_5vyBpXQ7HoUb8Mhw8nLxX1N4ZjR3dw1z-dWMd51KHGzeLISb7iJlxVb21lv9QMLvGAStyQqCVG_0OdMUncw"
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "5468d98a-6830-4c66-a859-9195aee3af10",
+            "colId": "0780c13b-2302-4bf0-9e59-e85b1c99e870",
+            "containerId": "",
+            "name": "Signup",
+            "url": "http://127.0.0.1:12222/auth/signup",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2024-01-21T09:43:55.809Z",
+            "modified": "2024-01-21T09:43:55.809Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\" : \"mattuu2\",\n  \"password\" : \"password\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}

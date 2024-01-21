@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"meecha/auth"
@@ -20,12 +21,34 @@ func main() {
 	auth.Init()
 
 	router := gin.Default()
-	
+
 	//ミドルウェア設定
 	auth.Auth_Init(router)
 	router.Use(auth.Auth_Middleware())
 
 	router.GET("/ping", func(ctx *gin.Context) {
+		//認証情報を取得
+		result, exits := ctx.Get(auth.KeyName)
+
+		//設定されていないとき戻る
+		if !exits {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//型を変換
+		Auth_Data := result.(auth.Auth_Result)
+
+		//認証に失敗してるとき戻る
+		if !Auth_Data.Success {
+			//エラーのHTMLを返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		log.Println(Auth_Data)
+
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
@@ -33,6 +56,52 @@ func main() {
 
 	//認証関連のグループ
 	authg := router.Group("/auth")
+
+	//ログアウト
+	authg.POST("/logout", func(ctx *gin.Context) {
+		//認証情報を取得
+		result, exits := ctx.Get(auth.KeyName)
+
+		//設定されていないとき戻る
+		if !exits {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//型を変換
+		Auth_Data := result.(auth.Auth_Result)
+
+		//認証に失敗してるとき戻る
+		if !Auth_Data.Success {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//リフレッシュトークンかどうか
+		if !Auth_Data.IsRefresh {
+			//アクセストークンの場合エラー
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//ログアウト処理
+		if err := auth.Logout(Auth_Data.Token); err != nil {
+			log.Println(err)
+			//ログアウトに失敗したときエラーを返す
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+
+		//成功メッセージ
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "Logout successful",
+		})
+	})
+
+	//ログイン
 	authg.POST("/login", func(ctx *gin.Context) {
 		//データを受け取る
 		var login_data LoginData
@@ -67,9 +136,9 @@ func main() {
 
 		//成功レスポンス
 		ctx.JSON(200, gin.H{
-			"message": "Login successful",
+			"message":      "Login successful",
 			"RefreshToken": result.RefreshToken,
-			"AccessToken" : result.AccessToken,
+			"AccessToken":  result.AccessToken,
 		})
 	})
 
