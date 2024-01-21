@@ -26,6 +26,7 @@ func main() {
 	auth.Auth_Init(router)
 	router.Use(auth.Auth_Middleware())
 
+	//ping
 	router.GET("/ping", func(ctx *gin.Context) {
 		//認証情報を取得
 		result, exits := ctx.Get(auth.KeyName)
