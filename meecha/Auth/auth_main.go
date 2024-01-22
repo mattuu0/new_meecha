@@ -85,6 +85,35 @@ func GetUser_ByName(uname string) (FindResult, error) {
 	return result, nil
 }
 
+// ユーザIDでユーザを取得する
+func GetUser_ByID(uid string) (FindResult, error) {
+	//空のユーザを作成する
+	fuser := database.User{}
+
+	//結果
+	result := FindResult{IsFind: false}
+
+	//初期化されていなかったらエラー
+	if !isinit {
+		return result, Get_Init_Error()
+	}
+
+	//ユーザを取得する
+	find_result := dbconn.Preload(clause.Associations).First(&fuser,&database.User{UID: uid})
+
+	if err := find_result.Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return result, gorm.ErrRecordNotFound
+	}
+
+	//見つかった設定にする
+	result.IsFind = true
+
+	//情報をセットする
+	result.UserData = fuser
+
+	return result, nil
+}
+
 // ぱすわーどをハッシュ化する
 func SecurePass(password string) (string, error) {
 	//ぱすわーど文字列をバイナリにする

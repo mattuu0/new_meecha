@@ -64,10 +64,24 @@ func main() {
 			return
 		}
 
-		log.Println(Auth_Data)
+		//ユーザデータ取得
+		uresult,err := auth.GetUser_ByID(Auth_Data.UserId)
+
+		//エラー処理
+		if err != nil {
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//ユーザが見つからないとき
+		if !uresult.IsFind {
+			ctx.AbortWithStatus(404)
+			return
+		}
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"userid": Auth_Data.UserId,
+			"name" : uresult.UserData.Name,
 		})
 	})
 
