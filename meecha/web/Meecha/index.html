@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="mt-5">
+    <form class="mt-5" id="login_form">
         <div class="form-group">
             <label for="login_username_input">ユーザ名</label>
             <input type="text" class="form-control" id="login_username_input" placeholder="ユーザ名を入力">
@@ -19,10 +19,10 @@
             <label for="login_password_input">パスワード</label>
             <input type="password" class="form-control" id="login_password_input" placeholder="パスワード">
         </div>
-        <button type="button" id="login_button" class="btn btn-primary">ログイン</button>
-    </div>
-    
-    <div class="mt-5">
+        <button type="submit" id="login_button" class="btn btn-primary">ログイン</button>
+    </form>
+
+    <form class="mt-5" id="signup_form">
         <div class="form-group">
             <label for="signup_username_input">ユーザ名</label>
             <input type="text" class="form-control" id="signup_username_input" placeholder="ユーザ名を入力">
@@ -31,8 +31,19 @@
             <label for="signup_password_input">パスワード</label>
             <input type="password" class="form-control" id="signup_password_input" placeholder="パスワード">
         </div>
-        <button type="button" id="signup_button" class="btn btn-primary">サインアップ</button>
+        <button type="submit" id="signup_button" class="btn btn-primary">サインアップ</button>
+    </form>
+
+    <div class="mt-5">
+        <button type="button" id="get_user_info" class="btn btn-primary">情報取得</button>
+        <button type="button" id="logout_btn" class="ms-5 btn btn-primary">ログアウト</button>
     </div>
+    <script src="./scripts/config.js"></script>
+    <script src="./scripts/util.js"></script>
+    <script src="./scripts/login.js"></script>
+    <script src="scripts/signup.js"></script>
+
+    <script src="./test.js"></script>
 </body>
 
 </html>

@@ -4,12 +4,15 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"meecha/auth"
 	"meecha/database"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	"github.com/gin-contrib/cors"
 )
 
 func main() {
@@ -22,12 +25,25 @@ func main() {
 
 	router := gin.Default()
 
+	//すべてのオリジンを承認
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return true
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
 	//ミドルウェア設定
 	auth.Auth_Init(router)
 	router.Use(auth.Auth_Middleware())
 
 	//ping
-	router.GET("/user_info", func(ctx *gin.Context) {
+	router.POST("/user_info", func(ctx *gin.Context) {
 		//認証情報を取得
 		result, exits := ctx.Get(auth.KeyName)
 
@@ -51,7 +67,7 @@ func main() {
 		log.Println(Auth_Data)
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"userid" : Auth_Data.UserId,
+			"userid": Auth_Data.UserId,
 		})
 	})
 
@@ -95,7 +111,6 @@ func main() {
 			return
 		}
 
-
 		//成功メッセージ
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "Logout successful",
@@ -123,7 +138,7 @@ func main() {
 
 		//見つからない場合
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			ctx.JSON(404, gin.H{
+			ctx.JSON(403, gin.H{
 				"message": "Incorrect username or password",
 			})
 
@@ -164,7 +179,7 @@ func main() {
 
 		//見つかった場合
 		if fresult.IsFind {
-			ctx.JSON(400, gin.H{
+			ctx.JSON(409, gin.H{
 				"message": "user already exists",
 			})
 			return
