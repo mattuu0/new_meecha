@@ -27,7 +27,7 @@ func main() {
 	router.Use(auth.Auth_Middleware())
 
 	//ping
-	router.GET("/ping", func(ctx *gin.Context) {
+	router.GET("/user_info", func(ctx *gin.Context) {
 		//認証情報を取得
 		result, exits := ctx.Get(auth.KeyName)
 
@@ -51,7 +51,7 @@ func main() {
 		log.Println(Auth_Data)
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+			"userid" : Auth_Data.UserId,
 		})
 	})
 

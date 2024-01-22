@@ -1,69 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>リッチなログイン画面</title>
-    <style>
-        body {
-            background-color: #f3f3f3;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>いろいろ</title>
 
-        .login-container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 400px;
-        }
-
-        .login-container h1 {
-            color: #333333;
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            border: 1px solid #cccccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            padding: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .login-container input[type="submit"] {
-            background-color: #4caf50;
-            border: none;
-            border-radius: 4px;
-            color: #ffffff;
-            cursor: pointer;
-            padding: 12px;
-            width: 100%;
-        }
-
-        .login-container input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="./bootstrap-5.3.0-dist/css/bootstrap.css">
 </head>
 
 <body>
-    <div class="login-container">
-        <h1>ログイン</h1>
-        <form action="login.php" method="post">
-            <input type="text" name="username" placeholder="ユーザー名" required>
-            <input type="password" name="password" placeholder="パスワード" required>
-            <input type="submit" value="ログイン">
-        </form>
+    <div class="mt-5">
+        <div class="form-group">
+            <label for="login_username_input">ユーザ名</label>
+            <input type="text" class="form-control" id="login_username_input" placeholder="ユーザ名を入力">
+        </div>
+        <div class="form-group">
+            <label for="login_password_input">パスワード</label>
+            <input type="password" class="form-control" id="login_password_input" placeholder="パスワード">
+        </div>
+        <button type="button" id="login_button" class="btn btn-primary">ログイン</button>
+    </div>
+    
+    <div class="mt-5">
+        <div class="form-group">
+            <label for="signup_username_input">ユーザ名</label>
+            <input type="text" class="form-control" id="signup_username_input" placeholder="ユーザ名を入力">
+        </div>
+        <div class="form-group">
+            <label for="signup_password_input">パスワード</label>
+            <input type="password" class="form-control" id="signup_password_input" placeholder="パスワード">
+        </div>
+        <button type="button" id="signup_button" class="btn btn-primary">サインアップ</button>
     </div>
 </body>
 
