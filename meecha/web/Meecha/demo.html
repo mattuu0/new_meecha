@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>meecha</title>
+    
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="{% static 'meecha/scripts/check_mobile.js' %}"></script>
+    <script src="{% static 'meecha/scripts/toastr.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'meecha/styles/toastr.min.css' %}">
+    
+</head>
+<body>
+    
+    <header>
+        {% csrf_token %}
+        <p><img src="{% static 'meecha/images/meecha.png' %}" alt="" id="rogo"></p>
+        <a href="/meecha/setting"><img src="{% static 'meecha/images/settings.png' %}" alt="" id="setting"></a>
+    </header>
+    
+    <main>
+    <!--
+        {% if request.user.is_authenticated %}
+        <div class="user_info">
+            <p>ユーザー名 : {{ request.user.username }}</p>
+            <p>ユーザーID : {{ request.user.userid }}</p>
+        </div>
+        {% else %}
+        <p>ログインしていません</p>
+        {% endif %}
+    -->
+        <div id="user_info">
+                <img src="{% static 'meecha/images/icon.jpg' %}" alt="" >
+            {% if request.user.is_authenticated %}
+                <p>{{ request.user.username }}</p>
+            {% else %}
+            <p>ログインしていません</p>
+            {% endif %}
+        </div>
+
+        <div class="user_search_area">
+            <input type="text" placeholder="ユーザー名" id="search_username_value">
+            <button id="user_search_button">検索</button>
+            <button id="search_clear_btn">クリア</button>
+        </div>
+
+        <div class="auto_move_check">
+            <label for="autochange_map" class="auto_move_label">
+                <input type="checkbox" name="autochange_map" id="auto_change_map">移動したときにマップも移動する
+            </label>
+        </div>
+
+        <div id="user_searh_result">
+
+        </div>
+
+        <div class="container">
+            <div id="show_map" class="map_area"></div>
+        </div>
+
+        
+        
+    </main>
+
+    <footer>
+        <div id="menu">                
+            <div class="menu_button">
+
+                <div>
+                    <button popovertarget="friends_area" id="get_friends_button" class="button_radius">
+                        フレンド一覧
+                    </button>
+                </div>
+
+                <div>
+                    <button popovertarget="recved_request_area" id="get_request_button" class="button_radius">
+                        受信済み
+                    </button>
+                </div>
+            
+                <div>
+                    <button popovertarget="sended_request_area" id="sended_request_button" class="button_radius">
+                        送信済み
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="recved_request_area" popover class="popover">
+                <p>受信済みリクエスト</p>
+                <div id="recved_request_show_area">
+                
+                </div>
+            </div>
+
+            <div id="sended_request_area" popover class="popover">
+                <p>送信済みリクエスト</p>
+                <div id="sended_request_show_area">
+
+                </div>
+            </div>
+
+
+            <div id="friends_area" popover class="popover">
+                <p>フレンド一覧</p>
+                <div id="friends_show_area">
+
+                </div>
+            </div>
+
+            <div class="demo_menu_button">
+
+                <div>
+                    <button class="button_radius">
+                        大阪
+                    </button>
+                </div>
+
+                <div>
+                    <button class="button_radius">
+                        東京
+                    </button>
+                </div>
+            
+                <div>
+                    <button class="button_radius">
+                        現在地
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="recved_request_area" popover class="popover">
+                <p>受信済みリクエスト</p>
+                <div id="recved_request_show_area">
+                
+                </div>
+            </div>
+
+            <div id="sended_request_area" popover class="popover">
+                <p>送信済みリクエスト</p>
+                <div id="sended_request_show_area">
+
+                </div>
+            </div>
+
+
+            <div id="friends_area" popover class="popover">
+                <p>フレンド一覧</p>
+                <div id="friends_show_area">
+
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <script src="{% static 'meecha/scripts/js.cookie.min.js' %}"></script>
+    <script src="{% static 'meecha/leaflet/leaflet.js' %}"></script>
+    <script src="{% static 'meecha/leaflet/leaflet.sprite.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'meecha/leaflet/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'meecha/styles/demo.css' %}">
+    <script src="{% static 'meecha/scripts/main.js' %}"></script>
+</body>
+</html>

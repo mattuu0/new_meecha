@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>位置情報共有</title>
+
+    <link rel="stylesheet" href="{% static 'meecha/styles/nologin.css' %}">
+</head>
+<body>
+    
+    <header>
+        {% csrf_token %}
+        <p><img src="{% static 'meecha/images/meecha.png' %}" alt="" id="rogo"></p>
+    </header>
+    
+    <main>
+
+        <div class="nologin">
+            <h1>ログインしてください</h1>
+            <a class="login_url" href="/accounts/login">ログインはこちら</a>
+        </div>
+    </main>
+    </body>
+</html>

@@ -1,11 +1,18 @@
 const get_user_info = document.getElementById("get_user_info");
+const icon_img = document.getElementById("icon_img");
 
 get_user_info.addEventListener("click",async function(evt){
     const req = await AccessPost(server_url + "/user_info",{});
 
     console.log(req.status);
 
-    console.log(await req.json());
+    const res_json = await req.json();
+    console.log(res_json);
+
+    const ShowId = res_json["userid"];
+    const iconurl = `${server_url}/geticon/${ShowId}?${new Date().getTime()}`;
+
+    icon_img.src = iconurl;
 })
 
 const logout_btn = document.getElementById("logout_btn");

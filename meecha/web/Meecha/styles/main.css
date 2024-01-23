@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Zen+Maru+Gothic:wght@700&display=swap');
+
+body {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    color: #00525f;
+    background-color: #f0fffa;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 1em;
+}
+
+#rogo{
+    width: 100px;
+    position: relative;
+    top:20px;
+    left: 20px;
+    z-index: 1;
+}
+
+#setting{
+    position: fixed;
+    margin-bottom: 20px;
+    width: 13vw;
+    top:5px;
+    right: 10px;
+    z-index: 1;
+}
+
+main{
+    margin-top: 50px;
+}
+
+.button_radius{
+    display: flex;
+    width: 100px;
+    height: 30px;
+    border-radius: 8px;
+    margin: 5px 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+#user_info{
+    display: flex;
+    justify-content: center;
+}
+
+#user_info img{
+    width: 13vw;
+    height: 13vw;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+
+.user_search_area {
+    display: flex;
+    justify-content: center;
+}
+
+.map_area {
+    width: 100vw;
+    height: 80vh;
+    z-index: 100;
+    margin: 20px 0;
+}
+
+footer{
+    width: 100%;
+}
+
+.popover{
+    width: 60vw;
+    height: 60vh;
+    background-color: rgba(233, 254, 247, 0.937);
+    border: 2px solid #5da38ccc;
+    border-radius: 10px;
+}
+
