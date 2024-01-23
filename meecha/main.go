@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -55,6 +56,40 @@ func main() {
 	auth.Auth_Init(router)
 	router.Use(auth.Auth_Middleware())
 
+	//アイコン取得
+	router.GET("/geticon/:uid", func(ctx *gin.Context) {
+		//ユーザを検索
+		result,err := auth.GetUser_ByID(ctx.Param("uid"))
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//ユーザが見つからない場合
+		if (!result.IsFind) {
+			//404を返す
+			ctx.AbortWithStatus(404)
+			return
+		}
+
+		//画像のパス
+		response_path := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",result.UserData.UID))
+		imgbin,err := ioutil.ReadFile(response_path)
+
+		//エラー処理
+		if err != nil {
+			//サーバエラー
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//データ返却
+		ctx.Data(200,"image/jpeg",imgbin)
+	})
+	
 	//アイコンを変更するエンドポイント
 	router.POST("/upicon", func(ctx *gin.Context) {
 		//認証情報を取得
@@ -289,6 +324,7 @@ func main() {
 	router.Run("127.0.0.1:12222") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
+//ファイルをコピーする関数
 func copyfile(srcName string,dstName string) error {
 	//元ファイルを開く
 	src, err := os.Open(srcName)

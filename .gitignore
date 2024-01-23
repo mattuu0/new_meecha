@@ -1,3 +1,5 @@
 *.db
 
 __debug_bin*
+
+/meecha/UserIcons/*
