@@ -17,3 +17,18 @@ logout_btn.addEventListener("click",async function(evt){
 
     console.log(await req.json());
 })
+
+const icon_upload = document.getElementById("icon_upload");
+
+const upload_icon_btn = document.getElementById("upload_icon");
+
+upload_icon_btn.addEventListener("click",async function(evt){
+    const updata = new FormData();
+    updata.append("file",icon_upload.files[0]);
+
+    console.log(updata.getAll("file"));
+
+    const icon_post = await AccessPost(server_url + "/upicon",updata,{},false);
+
+    console.log(icon_post);
+})

@@ -2,8 +2,12 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"meecha/auth"
@@ -13,6 +17,15 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gin-contrib/cors"
+
+	imgupload "github.com/olahol/go-imageupload"
+)
+
+var (
+	//デフォルトアイコン
+	DefaultIcon string  = "./assets/default_icon.jpg"
+	//ユーザアイコンフォルダ
+	IconDir string = "./UserIcons"
 )
 
 func main() {
@@ -38,11 +51,52 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	
-
 	//ミドルウェア設定
 	auth.Auth_Init(router)
 	router.Use(auth.Auth_Middleware())
+
+	//アイコンを変更するエンドポイント
+	router.POST("/upicon", func(ctx *gin.Context) {
+		//認証情報を取得
+		result, exits := ctx.Get(auth.KeyName)
+
+		//設定されていないとき戻る
+		if !exits {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//型を変換
+		Auth_Data := result.(auth.Auth_Result)
+
+		//認証に失敗してるとき戻る
+		if !Auth_Data.Success {
+			//エラーのHTMLを返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//画像を受け取る
+		img, err := imgupload.Process(ctx.Request, "file")
+		if err != nil {
+			log.Println(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//アイコンをリサイズ
+		thumb, err := imgupload.ThumbnailJPEG(img, 300, 300, 50)
+		if err != nil {
+			log.Println(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//保存するパス
+		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",Auth_Data.UserId))
+		thumb.Save(savepath)
+	})
 
 	//ping
 	router.POST("/user_info", func(ctx *gin.Context) {
@@ -190,6 +244,14 @@ func main() {
 			return
 		}
 
+		//ユーザネームとパスワード検証
+		if !auth.Validate_Name_Password(login_data.Name,login_data.Password) {
+			ctx.JSON(400, gin.H{
+				"message": "Bad Request",
+			})
+			return
+		}
+
 		//すでに存在するか確認
 		fresult, _ := auth.GetUser_ByName(login_data.Name)
 
@@ -213,6 +275,10 @@ func main() {
 			return
 		}
 
+		//デフォルトアイコン生成
+		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",result.UID))
+		copyfile(DefaultIcon,savepath)
+
 		//成功レスポンス
 		ctx.JSON(200, gin.H{
 			"message": "Sign up successful",
@@ -221,4 +287,32 @@ func main() {
 	})
 
 	router.Run("127.0.0.1:12222") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+func copyfile(srcName string,dstName string) error {
+	//元ファイルを開く
+	src, err := os.Open(srcName)
+    if err != nil {
+        return err
+    }
+
+	//コピー元ファイルを閉じる
+    defer src.Close()
+
+	//コピー先ファイルを作成
+    dst, err := os.Create(dstName)
+    if err != nil {
+        return err
+    }
+
+	//コピー先ファイルを閉じる
+    defer dst.Close()
+
+	//コピー
+    _, err = io.Copy(dst, src)
+    if  err != nil {
+        return err
+    }
+
+	return nil
 }

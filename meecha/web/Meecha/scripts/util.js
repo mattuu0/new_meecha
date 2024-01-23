@@ -1,24 +1,33 @@
 //アクセストークンでポストする
-async function AccessPost(posturl,body) {
+async function AccessPost(posturl,body,headers = {},seriarize = true) {
     //リクエスト飛ばす
-    return await TokenPost(posturl,body,get_access_token());
+    return await TokenPost(posturl,body,get_access_token(),headers,seriarize);
 }
 
 //リフレッシュトークンでポストする
-async function RefreshPost(posturl,body) {
+async function RefreshPost(posturl,body,headers = {},seriarize = true) {
     //リクエスト飛ばす
-    return await TokenPost(posturl,body,get_refresh_token());
+    return await TokenPost(posturl,body,get_refresh_token(),headers,seriarize);
 }
 
 //トークン付きでポストする
-async function TokenPost(posturl,body,token) {
+async function TokenPost(posturl,body,token,headers,seriarize = true) {
+    //送信するデータ
+    let body_data = body;
+
+    //シリアライズするか
+    if (seriarize) {
+        //Jsonをシリアライズ
+        body_data = JSON.stringify(body);
+    }
+
+    //トークンを設定
+    headers["Authorization"] = token;
     //リクエストを飛ばす
     const req = await fetch(posturl,{
         method: "POST",
-        headers: {
-            "Authorization" : token, 
-        },
-        body: JSON.stringify(body)
+        headers,
+        body: body_data
     })
 
     return req;
