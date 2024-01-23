@@ -17,7 +17,7 @@ import (
 
 func main() {
 	//データベース初期化
-	database.DBpath = "./test.db"
+	database.DBpath = "./meecha.db"
 	database.Init()
 
 	//認証初期化
@@ -37,6 +37,8 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	
 
 	//ミドルウェア設定
 	auth.Auth_Init(router)
@@ -65,7 +67,7 @@ func main() {
 		}
 
 		//ユーザデータ取得
-		uresult,err := auth.GetUser_ByID(Auth_Data.UserId)
+		uresult, err := auth.GetUser_ByID(Auth_Data.UserId)
 
 		//エラー処理
 		if err != nil {
@@ -81,7 +83,7 @@ func main() {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			"userid": Auth_Data.UserId,
-			"name" : uresult.UserData.Name,
+			"name":   uresult.UserData.Name,
 		})
 	})
 

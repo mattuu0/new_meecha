@@ -208,3 +208,5 @@ func Logout(RefreshToken string) error {
 func valid_pass(password []byte, hashpass string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashpass), password)
 }
+
+//アクセストークン更新
