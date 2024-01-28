@@ -126,6 +126,24 @@ func Gen_Refresh_Token(uid string) (Tokens, error) {
 		return tokens, init_error()
 	}
 
+	//既存のトークンを無効化
+	AtokenId,err := Get_AToken_ByUID(uid)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+		return tokens, err
+	}
+
+	//トークン無効化
+	err = DisableAToken(AtokenId)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+		return tokens, err
+	}
+
 	//リフレッシュトークンのID
 	RtokenID, err := Genid()
 
