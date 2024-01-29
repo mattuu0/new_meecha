@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	auth "meecha/Auth"
+	auth "meecha/auth"
 	"meecha/database"
 )
 

@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Zen+Maru+Gothic:wght@700&display=swap');
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    color: #00525f;
+    background-color: #f0fffa;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 1em;
+}
+
+main {
+    margin-top: 50px;
+}
+
+#rogo {
+    width: 100px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+a {
+    text-decoration: none;
+    margin: 0;
+}
+
+a:link {
+    color: #00525f;
+}
+
+a:visited {
+    color: #00525f;
+}
+
+button {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background-color: rgba(0, 0, 0, 0);
+    color: #00525f;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+}
+
+.user_info {
+    text-align: center;
+}
+
+.user_info img {
+    width: 20vw;
+    border-radius: 50%;
+}
+
+.setting_elements {
+    margin: 0 5%;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logout {
+    margin-left: 2%;
+}
+
+.friends {
+    margin-bottom: 0;
+}
+
+.friends img {
+    width: 10vw;
+    height: 9vw;
+}
+
+.friends_button button {
+    color: #038da2;
+}
+
+.friends_button div {
+    font-size: 1em;
+    margin-bottom: 10px;
+    margin-left: 18vw;
+}
+
+.set img {
+    width: 10vw;
+    height: 10vw;
+}
+
+.user_search_area {
+    margin-left: 0px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.user_search_area button {
+    border-radius: 5px;
+    background-color: #5da38ccc;
+}
+
+.user_search_area input {
+    width: 50%;
+}
+
+.arrow {
+    width: 15vw;
+    position: fixed;
+    bottom: 10px;
+}
+
+.distanec_select {
+    margin: auto;
+    width: 90%;
+    margin-top: 25px;
+    padding: 1.5em 1.2em;
+}
+
+.memo_update {
+    margin: 3px 5px;
+}
+
+.memo_text {
+    width: 100%;
+    height: 30%;
+    resize: none;
+}
+
+.accpet_area {
+    display: flex;
+}
+
+.accpet_area input {
+    margin: auto auto;
+    height: 80%;
+}
+
+.auto_move_check {
+    text-align: center;
+    margin: 10px auto;
+}
+
+.sended_request_area * {
+    margin: 3px;
+}
+
+.sended_request_area {
+    border-bottom: #000 1px dotted;
+}
+
+.recved_request_area * {
+    margin: 3px;
+}
+
+.recved_request_area {
+    border-bottom: #000 1px dotted;
+}
+
+.meecha_button {
+    border-radius: 5px;
+    background-color: #5da38ccc;
+}
+
+
+.menu_button {
+    width: 100vw;
+    display: flex;
+
+    bottom: 50px;
+    margin: auto;
+    align-content: stretch;
+}
+
+.meecha_btn {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background-color: #5da38ccc;
+    border: 0;
+    margin: 10px;
+}
+
+
+.friend_info * {
+    margin: 3px;
+}
+
+.friend_info {
+    border-bottom: #000 1px dotted;
+}
+
+.memo_textarea {
+    width: 90%;
+    margin: auto;
+}
