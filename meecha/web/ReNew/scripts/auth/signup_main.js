@@ -40,10 +40,10 @@ async function submit_signup(evt){
         return;
     }
 
-    //ユーザ情報取得
-    const uinfo = await AccessPost(uinfo_url,{});
-
-    console.log(await uinfo.json());
+    //ログイン成功したら飛ばす
+    if (login_result) {
+        window.location.href = "/";
+    }
 }
 
 //ロード完了イベント

@@ -1,10 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Zen+Maru+Gothic:wght@700&display=swap');
 
-
 body {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
     margin: 0;
     color: #00525f;
     background-color: #f0fffa;
@@ -12,25 +8,36 @@ body {
     font-size: 1em;
 }
 
-#rogo {
-    width: 100px;
-    position: relative;
-    top: 20px;
-    left: 20px;
-    z-index: 1;
-}
-
-#setting {
+header{
     position: fixed;
-    margin-bottom: 20px;
-    width: 13vw;
-    top: 5px;
-    right: 10px;
+    z-index: 100;
+}
+
+header p{
+    margin: 0;
+}
+
+#rogo_bg{
+    border-radius: 40px;
+    background-color: rgba(219, 255, 243, 0.663);
+    padding: 10px 10px 7px;
+    margin-top: 3.5vh;
+    margin-left: 7vw;
     z-index: 1;
 }
 
-main {
-    margin-top: 50px;
+#rogo {
+    margin: auto;
+    width: 100px;
+}
+
+#setting_img {
+    border-radius: 40px;
+    position: fixed;
+    width: 13vw;
+    top: 3vh;
+    right: 7vw;
+    z-index: 1;
 }
 
 .button_radius {
@@ -44,16 +51,20 @@ main {
 }
 
 #user_info {
+    position: fixed;
+    bottom: 3vh;
+    left: 7vw;
     display: flex;
     justify-content: center;
+    z-index: 100;
 }
 
 #user_info img {
-    width: 13vw;
-    height: 13vw;
+    max-width: 20vw;
     border-radius: 50%;
-    margin-right: 10px;
 }
+
+
 
 
 .user_search_area {
@@ -63,9 +74,8 @@ main {
 
 .map_area {
     width: 100vw;
-    height: 80vh;
-    z-index: 100;
-    margin: 20px 0;
+    height: 100vh;
+    z-index: 1;
 }
 
 footer {

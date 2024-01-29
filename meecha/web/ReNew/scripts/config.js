@@ -26,3 +26,16 @@ const access_token_key = "access_token";
 
 //リフレッシュトークンキー
 const refresh_token_key = "refresh_token";
+
+//アイコンURL
+const IconBaseUrl = server_url + "/geticon/"
+
+//アイコンURL取得
+function GetIconUrl(userid) {
+    //アイコンのURLを返す
+    return IconBaseUrl + userid;
+}
+
+//TODO 本番にはfalseで設定する
+//デバッグ設定
+const debug = true;
