@@ -31,7 +31,7 @@ const upload_icon_btn = document.getElementById("upload_icon");
 
 upload_icon_btn.addEventListener("click",async function(evt){
     const updata = new FormData();
-    updata.append("file",icon_upload.files[0]);
+    updata.append("imgfile",icon_upload.files[0]);
 
     console.log(updata.getAll("file"));
 

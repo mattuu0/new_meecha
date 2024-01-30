@@ -12,6 +12,9 @@ const signup_url = server_url + "/auth/signup";
 //ログアウトURL
 const logout_url = server_url + "/auth/logout";
 
+//リフレッシュURL
+const refresh_url = server_url + "/auth/refresh";
+
 //アクセストークンキー
 const access_token_key = "access_token";
 

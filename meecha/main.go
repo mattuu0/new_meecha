@@ -179,6 +179,51 @@ func main() {
 	//認証関連のグループ
 	authg := router.Group("/auth")
 
+	//アクセストークンリフレッシュ
+	authg.POST("/refresh",func(ctx *gin.Context)  {
+			//認証情報を取得
+		result, exits := ctx.Get(auth.KeyName)
+
+		//設定されていないとき戻る
+		if !exits {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//型を変換
+		Auth_Data := result.(auth.Auth_Result)
+
+		//認証に失敗してるとき戻る
+		if !Auth_Data.Success {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//アクセストークンかどうか
+		if !Auth_Data.IsRefresh {
+			//アクセストークンの場合エラー
+			ctx.AbortWithStatus(400)
+			return
+		}
+
+		//アクセストークン更新
+		atoken,err := auth.Refresh(Auth_Data.UserId)
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//トークンを返す
+		ctx.JSON(http.StatusOK,gin.H{
+			"token" : atoken,
+		})
+	})
+
 	//ログアウト
 	authg.POST("/logout", func(ctx *gin.Context) {
 		//認証情報を取得

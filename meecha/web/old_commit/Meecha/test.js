@@ -32,3 +32,13 @@ upload_icon_btn.addEventListener("click",async function(evt){
 
     console.log(icon_post);
 })
+
+const refresh_btn = document.getElementById("refresh_btn");
+
+refresh_btn.addEventListener("click",async function(evt){
+    const req = await RefreshPost(refresh_url,{});
+
+    console.log(req.status);
+
+    console.log(await req.json());
+})
