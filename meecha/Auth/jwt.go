@@ -185,7 +185,7 @@ func register_token(uid string, AccessId string, RefreshId string, exp int64) er
 		Exp:     exp,
 	}
 
-	dbconn.Create(&Atoken)
+	dbconn.Save(&Atoken)
 	
 	//リフレッシュトークンの情報
 	Rtoken := database.RefreshToken{
@@ -195,7 +195,7 @@ func register_token(uid string, AccessId string, RefreshId string, exp int64) er
 	}
 
 	//登録
-	dbconn.Create(&Rtoken)
+	dbconn.Save(&Rtoken)
 	
 	//コミットする
 	//dbconn.commit()
