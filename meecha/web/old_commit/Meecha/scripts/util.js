@@ -1,7 +1,29 @@
 //アクセストークンでポストする
 async function AccessPost(posturl,body,headers = {},seriarize = true) {
+    //リクエストを送信
+    const first_request = await TokenPost(posturl,body,get_access_token(),headers,seriarize);
+
+    //リクエストが403の時
+    if (first_request.status == 403) {
+        //トークンを更新
+        const req = await TokenPost(refresh_url,body,get_refresh_token(),{},seriarize);
+
+        //Jsonに変換
+        const Atoken = await req.json();
+
+        //トークン抽出
+        const AccessToken = Atoken["token"];
+
+        //トークン保存
+        save_token(AccessToken,get_refresh_token());
+
+        //もう一度リクエストを送信
+        return await TokenPost(posturl,body,AccessToken,headers,seriarize);
+    }
+    
+
     //リクエスト飛ばす
-    return await TokenPost(posturl,body,get_access_token(),headers,seriarize);
+    return first_request;
 }
 
 //リフレッシュトークンでポストする

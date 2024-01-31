@@ -181,3 +181,30 @@ function get_friends(evt) {
 
     friend_show_view.style.display = "absolute";
 }
+
+//ログアウトリンク取得
+const logout_link = document.getElementById("logout_link");
+
+//ログアウト関数
+async function logout(evt) {
+    //イベントキャンセル
+    evt.preventDefault();
+
+    //ログアウト送信
+    const req = await RefreshPost(logout_url,{});
+
+    //200以外
+    if (req.status != 200) {
+        alert("ログアウトに失敗しました");
+        return;
+    }
+
+    //トークン削除
+    delete_token();
+
+    //ログイン画面へ
+    window.location.href = "./login.html";
+}
+
+//イベント登録
+logout_link.addEventListener("click",logout);

@@ -30,6 +30,9 @@ const refresh_token_key = "refresh_token";
 //アイコンURL
 const IconBaseUrl = server_url + "/geticon/"
 
+//リフレッシュURL
+const refresh_url = server_url + "/auth/refresh";
+
 //アイコンURL取得
 function GetIconUrl(userid) {
     //アイコンのURLを返す

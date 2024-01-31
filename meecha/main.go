@@ -29,6 +29,11 @@ var (
 	IconDir string = "./UserIcons"
 )
 
+func getFileNameWithoutExt(path string) string {
+    // Fixed with a nice method given by mattn-san
+    return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
+}
+
 func main() {
 	//データベース初期化
 	database.DBpath = "./meecha.db"
@@ -54,6 +59,49 @@ func main() {
 
 	//ミドルウェア設定
 	auth.Auth_Init(router)
+
+	//フォルダ開く
+	Icons,err := os.Open(IconDir)
+
+	//エラー処理
+	if err != nil {
+		log.Println("エラーです")
+		return
+	}
+
+	//アイコンファイル
+	IconFiles,err := Icons.ReadDir(0)
+
+	//エラー処理
+	if err != nil {
+		log.Println("エラーです")
+		return
+	}
+
+	//残っているユーザアイコンを消す
+	for _,val := range IconFiles {
+		//ユーザを取得する
+		_,err := auth.GetUser_ByID(getFileNameWithoutExt(val.Name()))
+
+		//エラー処理
+		//見つからないとき
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			//削除する
+			//エラー処理
+			if err := os.Remove(filepath.Join(IconDir,val.Name())); err != nil {
+				log.Println(err)
+				continue
+			}
+			continue
+		}
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+	}
+
 	router.Use(auth.Auth_Middleware())
 
 	//アイコン取得

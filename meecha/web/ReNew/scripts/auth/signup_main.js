@@ -42,7 +42,7 @@ async function submit_signup(evt){
 
     //ログイン成功したら飛ばす
     if (login_result) {
-        window.location.href = "/";
+        window.location.href = "./index.html";
     }
 }
 
