@@ -1,3 +1,4 @@
+//トークン
 package auth
 
 import (
