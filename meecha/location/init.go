@@ -11,6 +11,7 @@ var (
 	dbconn *gorm.DB
 	isinit bool = false
 	secret []byte
+	tokens map[string]string = map[string]string{}
 )
 
 // 初期化

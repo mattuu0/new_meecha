@@ -2,11 +2,14 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
+
+	"meecha/location"
 )
 
-//コマンドメッセージ
+// コマンドメッセージ
 type CommandMessage struct {
 	//コマンド
 	Command string
@@ -15,7 +18,7 @@ type CommandMessage struct {
 	Payload interface{}
 }
 
-//レスポンスメッセージ
+// レスポンスメッセージ
 type ResponseMessage struct {
 	//コマンド
 	Command string
@@ -25,9 +28,15 @@ type ResponseMessage struct {
 }
 
 // Websocket 関数
-func handle_ws(wsconn *websocket.Conn,userid string) {
+func handle_ws(wsconn *websocket.Conn, userid string) {
 	// TODO
-	defer wsconn.Close()
+	defer func ()  {
+		//Websocket接続削除
+		delete(wsconns,userid)
+
+		//接続を閉じる
+		wsconn.Close()	
+	}()
 
 	//ユーザIDを返す
 	write_data := ResponseMessage{
@@ -60,11 +69,60 @@ func handle_ws(wsconn *websocket.Conn,userid string) {
 			break
 		}
 
-		log.Println(readmsg)
+		//コマンド処理
+		switch (readmsg.Command) {
+			case "location":
+				payload := readmsg.Payload.(map[string]interface{})
+
+				//位置情報
+				token_userid,err := location.VerifyToken(payload["token"].(string))
+
+				//エラー処理
+				if err != nil {
+					log.Println(err)
+					break
+				}
+
+				//ユーザID比較
+				if userid != token_userid {
+					log.Println("userid error")
+					break
+				}
+
+				log.Println(payload["lat"].(float64))
+				log.Println(payload["lng"].(float64))
+		}
 	}
 }
 
-//位置情報用トークンを送る
+// 位置情報用トークンを送る
 func send_location_token(wsconn *websocket.Conn, userid string) {
-	
+	for {
+		//トークン生成
+		token, err := location.GenToken(userid)
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+		//トークンメッセージ
+		rmsg := ResponseMessage{
+			Command: "Location_Token",
+			Payload: token,
+		}
+
+		//データを送る
+		wresult := wsconn.WriteJSON(rmsg)
+
+		//エラー処理
+		if wresult != nil {
+			log.Println(wresult)
+			break
+		}
+
+		//5秒待機
+		time.Sleep(time.Second * 3)
+	}
 }

@@ -2,7 +2,6 @@ package location
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-	"gorm.io/gorm/clause"
 
 	"meecha/database"
 
@@ -28,14 +27,13 @@ func GenToken(uid string) (string,error) {
 	}
 
 	//トークン作成
-	//リフレッシュトークン情報
-	Rclaims := jwt.MapClaims{
+	claims := jwt.MapClaims{
 		"userid":   uid,
 		"tokenid":  tokenID,
 	}
 
 	//トークン生成
-	token := jwt.NewWithClaims(auth.SignMethod, Rclaims)
+	token := jwt.NewWithClaims(auth.SignMethod, claims)
 
 	//トークン署名
 	signed_token, err := token.SignedString(secret)
@@ -116,19 +114,15 @@ func Get_Token_ByUID(uid string) (string, error) {
 		return "", auth.Get_Init_Error()
 	}
 
-	//トークンを取得
-	result := database.Location_Token{}
+	//トークン
+	result,found := tokens[uid]
 
-	//検索
-	db_result := dbconn.Preload(clause.Associations).First(&result, database.Location_Token{UID: uid})
-
-	//エラー処理
-	if db_result.Error != nil {
-		return "", db_result.Error
+	//トークンが見つからなかったらエラーを返す
+	if !found {
+		return "", fmt.Errorf("token not found")
 	}
 
-	//トークンを返す
-	return result.TokenID, nil
+	return result,nil
 }
 //トークンを登録
 func registerToken(uid string,tokenid string) error {
@@ -138,19 +132,8 @@ func registerToken(uid string,tokenid string) error {
 		return auth.Get_Init_Error()
 	}
 
-	//トークンを登録
-	register_data := database.Location_Token{
-		UID: uid,
-		TokenID: tokenid,
-	}
-
-	//登録
-	result := dbconn.Save(&register_data)
-
-	//エラー処理
-	if result.Error != nil {
-		return result.Error
-	}
+	//トークン保存
+	tokens[uid] = tokenid
 
 	return nil
 }

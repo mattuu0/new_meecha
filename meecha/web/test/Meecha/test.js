@@ -85,6 +85,13 @@ function connect_ws() {
                 //接続済みにする
                 ws_connected = true;
                 break;
+            case "Location_Token":
+                //トークンが来たときに位置情報を送る
+                send_command("location",load_json.Payload);
+                break;
+            default:
+                console.log(load_json);
+                break;
         }
     }
 

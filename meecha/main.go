@@ -12,6 +12,7 @@ import (
 
 	"meecha/auth"
 	"meecha/database"
+	"meecha/location"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -44,6 +45,9 @@ func main() {
 
 	//認証初期化
 	auth.Init()
+
+	//位置情報初期化
+	location.Init("pMTpmD3N7qGdY4JSjc1fhBaOZyZXGh1e")
 
 	router := gin.Default()
 

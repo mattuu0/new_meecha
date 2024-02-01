@@ -23,6 +23,7 @@ var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 });
 */
 
+/*
 var tileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     attribution: "<a href='https://developers.google.com/maps/documentation' target='_blank'>Google Map</a>",
@@ -37,6 +38,8 @@ if (debug) {
     setView(34.70653432424858, 135.50369152261842, 20);
 }
 
+*/
+
 //マップを移動する
 function setView(latitude, longitude, zoom = main_map.getZoom()) {
     //マップ設定
@@ -48,36 +51,38 @@ function success(pos) {
     //位置情報
     var crd = pos.coords;
 
-    //マーカーが設定されていなかったら現在地に打つ
-    if (myself_marker == null) {
-        setView(crd.latitude, crd.longitude, 20);
+    try {
+        //マーカーが設定されていなかったら現在地に打つ
+        if (myself_marker == null) {
+            setView(crd.latitude, crd.longitude, 20);
 
-        if (UserID == "") {
-            return;
+            if (UserID == "") {
+                return;
+            }
+
+            //マーカーを設定
+            var myicon = L.icon({
+                iconUrl: GetIconUrl(UserID),
+                iconSize: [50, 50],
+                iconAnchor: [37, 75],
+                popupAnchor: [0, -70],
+                className: "MapIcon",
+            });
+
+            myself_marker = L.marker([crd.latitude, crd.longitude], { icon: myicon })
+                .bindPopup('<p>あなたの現在地</p>');
+            main_map.addLayer(myself_marker);
+        } else {
+            //マーカーがあったら移動する
+            myself_marker.setLatLng([crd.latitude, crd.longitude]);
         }
 
-        //マーカーを設定
-        var myicon = L.icon({
-            iconUrl: GetIconUrl(UserID),
-            iconSize: [50,50],
-            iconAnchor: [37, 75],
-            popupAnchor: [0, -70],
-            className: "MapIcon",
-        });
-        
-        myself_marker = L.marker([crd.latitude, crd.longitude], { icon: myicon })
-            .bindPopup('<p>あなたの現在地</p>');
-        main_map.addLayer(myself_marker);
-    } else {
-        //マーカーがあったら移動する
-        myself_marker.setLatLng([crd.latitude, crd.longitude]);
-    }
-
-    console.log(UserID);
-
-    //トラッキング
-    if (auto_tracking) {
-        setView(crd.latitude, crd.longitude);
+        //トラッキング
+        if (auto_tracking) {
+            setView(crd.latitude, crd.longitude);
+        }
+    } catch (err) {
+        console.log(err);
     }
 
     //自身の位置を更新する

@@ -71,14 +71,6 @@ func Init() error {
 	if err != nil {
 		return err
 	}
-	
-	//マイグレーション
-	err = dbconn.AutoMigrate(&Location_Token{})
-
-	//エラー処理
-	if err != nil {
-		return err
-	}
 
 	IsInit = true
 	return nil

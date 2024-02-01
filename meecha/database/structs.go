@@ -29,11 +29,6 @@ type User_Location struct {
 	Lng float64 //経度
 }
 
-//位置情報トークン
-type Location_Token struct {
-	TokenID  string `gorm:"primaryKey"` //トークンID
-	UID      string //トークンのユーザID
-}
 
 // フレンド一覧
 type Friends struct {
