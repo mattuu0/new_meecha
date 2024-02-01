@@ -49,7 +49,7 @@ let ws_connected = false;
 
 function send_command(Command,payload,seriarize = true) {
     //送信するデータ
-    const send_payload = payload;
+    let send_payload = payload;
 
     //シリアライズするか
     if (seriarize) {

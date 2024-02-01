@@ -12,6 +12,7 @@ import (
 
 	"meecha/auth"
 	"meecha/database"
+	"meecha/friends"
 	"meecha/location"
 
 	"github.com/gin-gonic/gin"
@@ -48,6 +49,9 @@ func main() {
 
 	//位置情報初期化
 	location.Init("pMTpmD3N7qGdY4JSjc1fhBaOZyZXGh1e")
+
+	//フレンド初期化
+	friends.Init()
 
 	router := gin.Default()
 
@@ -120,6 +124,22 @@ func main() {
 	//ping
 	router.POST("/user_info", get_user_info)
 
+	//フレンド
+	friendg := router.Group("/friend")
+
+	//ミドルウェア設定
+	friendg.Use(auth.Auth_Middleware())
+	friendg.Use(auth.Auth_Require_Middleware())
+
+	//フレンド一覧取得
+	friendg.POST("/getall",get_friends)
+
+	//ユーザ検索
+	friendg.POST("/search",search_user)
+
+	//リクエスト送信
+	friendg.POST("/request",send_request)
+
 	//認証関連のグループ
 	authg := router.Group("/auth")
 
@@ -136,6 +156,12 @@ func main() {
 	authg.POST("/signup", signup)
 
 	router.GET("/ws",func(ctx *gin.Context) {
+		defer func ()  {
+			if rcover := recover(); rcover != nil {
+				log.Println("Panic : " + rcover.(string))
+			}
+		}()
+
 		//Websocket接続
 		wsconn,err := wsupgrader.Upgrade(ctx.Writer,ctx.Request,nil)
 

@@ -37,7 +37,7 @@ func Send(Sender_id string, Receiver_id string) (string, error){
 	Receiver := dbconn.Where(database.Sent{Sender_id: Receiver_id}).Where(database.Sent{Receiver_id: Sender_id}).First(&named_filter).RowsAffected
 
 	//既に存在している場合
-	if(Sender + Receiver != 0){
+	if (Sender + Receiver != 0){
 		return "",errors.New("request_is_already_existing")
 	}
 

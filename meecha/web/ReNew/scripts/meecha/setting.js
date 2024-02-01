@@ -97,8 +97,21 @@ function init(evt) {
     //オブジェクト取得
     
     //イベント関連
-    function search_user(evt){
-        send_command("search_user",{username : search_value.value});
+    async function search_user(evt){
+        //検索
+        const req = await AccessPost(friend_search_url,{},{"username":search_value.value});
+
+        //200以外
+        if (req.status != 200) {
+            console.log("ユーザー検索に失敗しました");
+            return;
+        }
+
+        //検索結果
+        const result = await req.json();
+
+        //検索結果を表示
+        console.log(result);
     }
 
     //イベント登録
@@ -113,10 +126,12 @@ function init(evt) {
 
 window.onload = init;
 
+//長さを選ぶポップアップ表示
 function show_setting_distance(evt) {
     setting_distance_area.classList.toggle("is-show");
 }
 
+//検索ポップアップ表示
 function show_pupup_search_area(evt) {
     pupup_search_area.classList.toggle("is-show");
 }
@@ -176,7 +191,9 @@ function get_sended_friend_request(evt) {
 }
 
 //フレンド一覧を取得する
-function get_friends(evt) {
+async function get_friends(evt) {
+    await get_all_friends();
+
     pupup_friends_show_area.classList.toggle("is-show");
 
     friend_show_view.style.display = "absolute";
@@ -208,3 +225,69 @@ async function logout(evt) {
 
 //イベント登録
 logout_link.addEventListener("click",logout);
+
+function add_search_result(uid,name) {
+    const result_div = document.createElement("div");
+    result_div.classList.add("search_result");
+    
+    result_div.insertAdjacentHTML("beforeend",`
+        <img class="search_result_icon" src="${GetIconUrl(uid)}">
+        <p class="search_result_name">${name}</p>
+        <button class="send_request_button" id="${uid}">送信</button>
+    `);
+
+    //送信ボタン取得
+    const request_btn = result_div.querySelector(".send_request_button");
+    
+    request_btn.addEventListener("click",async function(evt) {
+        //ID取得
+        const sendid = evt.target.id;
+
+        await AccessPost(send_request_url,{"Targetid":sendid});
+    })
+
+    search_result_area.appendChild(result_div);
+}
+
+add_search_result("c12cfa46-8499-437e-95a7-86887aafb5cd","aaa");
+
+show_pupup_search_area(null);
+
+//ユーザアイコンエリア
+const user_icon = document.getElementById("user_icon");
+
+//ユーザ情報取得処理
+async function get_userinfo() {
+    try {
+        //りくえすと　
+        const req = await AccessPost(uinfo_url, {});
+
+        //403の時
+        if (req.status == 403) {
+            //ログインに戻る
+            window.location.href = "./login.html";
+            return;
+        }
+
+        //ユーザデータ取得
+        const userinfo = await req.json();
+
+        const userid = userinfo["userid"];
+        //アイコンURL
+        user_icon.src = GetIconUrl(userid);
+
+        console.log(userid);
+
+        //ユーザid設定
+        UserID = userinfo["userid"];
+    } catch (error) {
+        //エラー処理
+        console.log(error);
+
+        //ログインに戻る
+        window.location.href = "./login.html";
+        return;
+    }
+}
+
+get_userinfo();

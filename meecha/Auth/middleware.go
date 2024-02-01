@@ -74,3 +74,60 @@ func Auth_Middleware() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+// 認証ミドルウェア
+func Auth_Require_Middleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		//ヘッダー取得
+		AuthToken := ctx.Request.Header.Get(HeaderName)
+
+		//トークンが空文字の場合戻る
+		if len(AuthToken) == 0 {
+			//結果を設定
+			ctx.AbortWithStatus(401)
+			return
+		}
+
+		//トークン検証
+		result, err := Valid_Token(AuthToken)
+
+		//エラー処理
+		if err != nil {
+			log.Print(err)
+			//結果を設定
+			ctx.AbortWithStatus(401)
+
+			//処理を終了
+			ctx.Next()
+			return
+		}
+
+		//リフレッシュトークンか
+		if result.IsRefresh {
+			//結果を設定
+			ctx.AbortWithStatus(400)
+			return
+		}
+
+		//ユーザが存在するか
+		find_result,err := GetUser_ByID(result.Userid)
+
+		//エラー処理
+		if err != nil {
+			log.Print(err)
+			//結果を設定
+			ctx.AbortWithStatus(403)
+			return;
+		}
+
+		//ユーザが見つからない場合
+		if !find_result.IsFind {
+			//結果を設定
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//処理続行
+		ctx.Next()
+	}
+}

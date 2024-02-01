@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"fmt"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"meecha/database"
@@ -69,9 +71,15 @@ func GetUser_ByName(uname string) (FindResult, error) {
 		return result, Get_Init_Error()
 	}
 
+	//空文字のとき
+	if uname == "" {
+		return result, fmt.Errorf("username is empty")
+	}
+
 	//ユーザを取得する
 	find_result := dbconn.Preload(clause.Associations).First(&fuser,&database.User{Name: uname})
 
+	//エラー処理
 	if err := find_result.Error; errors.Is(err, gorm.ErrRecordNotFound) {
 		return result, gorm.ErrRecordNotFound
 	}

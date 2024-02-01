@@ -104,4 +104,3 @@ function connect_ws() {
 window.addEventListener("load", function (evt) {
     connect_ws();
 })
-

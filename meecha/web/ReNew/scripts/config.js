@@ -36,6 +36,15 @@ const IconBaseUrl = server_url + "/geticon/"
 //リフレッシュURL
 const refresh_url = server_url + "/auth/refresh";
 
+//フレンド一覧URL
+const friends_url = server_url + "/friend/getall";
+
+//フレンド検索URL
+const friend_search_url = server_url + "/friend/search";
+
+//リクエスト送信URL
+const send_request_url = server_url + "/friend/request";
+
 //アイコンURL取得
 function GetIconUrl(userid) {
     //アイコンのURLを返す

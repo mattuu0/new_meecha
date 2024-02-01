@@ -3,7 +3,7 @@ package friends
 import (
 	"errors"
 	"log"
-	_ "log"
+	
 	"meecha/auth"
 	"meecha/database"
 	"strconv"

@@ -30,7 +30,11 @@ type ResponseMessage struct {
 // Websocket 関数
 func handle_ws(wsconn *websocket.Conn, userid string) {
 	// TODO
-	defer func ()  {
+	defer func () {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+
 		//Websocket接続削除
 		delete(wsconns,userid)
 
