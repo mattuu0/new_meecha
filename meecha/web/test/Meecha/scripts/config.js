@@ -1,5 +1,8 @@
 //設定ファイル
 
+//サーバIP
+const ServerIp = "127.0.0.1:12222";
+
 //サーバURL
 const server_url = "http://127.0.0.1:12222";
 

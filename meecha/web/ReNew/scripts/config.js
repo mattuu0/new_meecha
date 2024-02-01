@@ -42,3 +42,6 @@ function GetIconUrl(userid) {
 //TODO 本番にはfalseで設定する
 //デバッグ設定
 const debug = true;
+
+//ユーザID
+let UserID = "";

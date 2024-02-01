@@ -21,3 +21,12 @@ type RefreshToken struct {
 	UID      string //トークンのユーザID
 	AccessID string //アクセストークンID
 }
+
+//位置情報
+type User_Location struct {
+	UID      string  `gorm:"primaryKey"` //トークンID
+	TokenID  string  //アクセストークンID
+	Lat      float64 //緯度
+	Lng      float64 //経度
+	WaitTime int64   //待機時間
+}
