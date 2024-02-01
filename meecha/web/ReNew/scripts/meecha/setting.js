@@ -112,6 +112,8 @@ function init(evt) {
 
         //検索結果を表示
         console.log(result);
+        clear_child_elems(search_result_area);
+        add_search_result(result.uid,result.name);
     }
 
     //イベント登録
@@ -186,7 +188,9 @@ function get_friend_request(evt) {
 }
 
 //送信済みフレンドリクエストを取得する
-function get_sended_friend_request(evt) {
+async function get_sended_friend_request(evt) {
+    await get_sent_requests();
+
     sended_request_area.classList.toggle("is-show");
 }
 
@@ -227,14 +231,19 @@ async function logout(evt) {
 logout_link.addEventListener("click",logout);
 
 function add_search_result(uid,name) {
+    //検索結果を表示
     const result_div = document.createElement("div");
     result_div.classList.add("search_result");
     
-    result_div.insertAdjacentHTML("beforeend",`
+    const dirty = `
         <img class="search_result_icon" src="${GetIconUrl(uid)}">
         <p class="search_result_name">${name}</p>
         <button class="send_request_button" id="${uid}">送信</button>
-    `);
+    `
+
+    const clean = DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true } });
+    //検索結果を表示
+    result_div.insertAdjacentHTML("beforeend",clean);
 
     //送信ボタン取得
     const request_btn = result_div.querySelector(".send_request_button");
@@ -249,9 +258,8 @@ function add_search_result(uid,name) {
     search_result_area.appendChild(result_div);
 }
 
-add_search_result("c12cfa46-8499-437e-95a7-86887aafb5cd","aaa");
-
-show_pupup_search_area(null);
+//ユーザー名
+const user_name = document.getElementById("user_name");
 
 //ユーザアイコンエリア
 const user_icon = document.getElementById("user_icon");
@@ -276,7 +284,8 @@ async function get_userinfo() {
         //アイコンURL
         user_icon.src = GetIconUrl(userid);
 
-        console.log(userid);
+        //ユーザ名設定
+        user_name.textContent = userinfo["name"];
 
         //ユーザid設定
         UserID = userinfo["userid"];
@@ -290,4 +299,8 @@ async function get_userinfo() {
     }
 }
 
-get_userinfo();
+//ロード完了イベント
+window.addEventListener("load",function(evt) {
+    //ゆーざー情報取得
+    get_userinfo();
+})

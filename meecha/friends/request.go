@@ -92,12 +92,18 @@ func Get_Sent(Sender_id string) (map[string]map[string]string, error){
 	//map宣言
 	maps := map[string]map[string]string{}
 
-
-
 	//送信した配列をすべてmapに代入
 	for i := 0; i < int(length); i++ {
+		//受信者の情報取得
+		uinfo,err := auth.GetUser_ByID(named_filter[i].Receiver_id)
+
+		//ユーザー情報取得に失敗
+		if err != nil{
+			continue
+		}
+
 		maps[named_filter[i].UID] = map[string]string{
-			"name":named_filter[i].Receiver_id,					//受信した側の名前
+			"name":uinfo.UserData.Name,//受信した側の名前
 			"time":strconv.Itoa(int(named_filter[i].SendTime)), //リクエストした時間
 		}
 	}

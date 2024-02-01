@@ -46,8 +46,28 @@ async function submit_signup(evt){
     }
 }
 
+//ユーザ情報取得処理
+async function get_userinfo() {
+    try {
+        //りくえすと　
+        const req = await AccessPost(uinfo_url, {});
+
+        //403の時
+        if (req.status == 200) {
+            //ログインに戻る
+            window.location.href = "./index.html";
+            return;
+        }
+    } catch (error) {
+        //エラー処理
+        console.log(error);
+        return;
+    }
+}
+
 //ロード完了イベント
 window.addEventListener("DOMContentLoaded",function(evt){
+    get_userinfo();
     //送信イベント
     signup_form_.addEventListener("submit",submit_signup);
 });

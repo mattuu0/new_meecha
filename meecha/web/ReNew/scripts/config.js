@@ -45,6 +45,9 @@ const friend_search_url = server_url + "/friend/search";
 //リクエスト送信URL
 const send_request_url = server_url + "/friend/request";
 
+//リクエスト送信URL
+const get_send_url = server_url + "/friend/get_sent";
+
 //アイコンURL取得
 function GetIconUrl(userid) {
     //アイコンのURLを返す

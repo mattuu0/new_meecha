@@ -140,6 +140,9 @@ func main() {
 	//リクエスト送信
 	friendg.POST("/request",send_request)
 
+	//送信済み取得
+	friendg.POST("/get_sent",get_sent_request)
+
 	//認証関連のグループ
 	authg := router.Group("/auth")
 

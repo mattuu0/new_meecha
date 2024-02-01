@@ -139,3 +139,26 @@ func send_request(ctx *gin.Context) {
 
 	log.Println(requestid)
 }
+
+//送信済み取得
+func get_sent_request(ctx *gin.Context) {
+	//認証情報を取得
+	uid,err := getid(ctx)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//送信済み取得
+	result, err := friends.Get_Sent(uid)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	ctx.JSON(200, result)
+}
