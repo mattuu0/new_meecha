@@ -1,0 +1,48 @@
+package friends
+
+import (
+	"crypto/sha512"
+	"encoding/hex"
+	"errors"
+	"meecha/database"
+	"strings"
+	"time"
+)
+
+//フレンド申請送信
+func Send(Sender_base_id string, Receiver_base_id string) (string, error){
+	if Sender_base_id == Receiver_base_id {
+		return "",errors.New("同じの指定しないでください")
+	}
+
+	Sender_id := strings.ReplaceAll(Sender_base_id,"|","_")
+	Receiver_id := strings.ReplaceAll(Receiver_base_id,"|","_")
+
+	//uuid取得
+	//UUID文字列をSHA512文字列にする
+	hash_byte1 := sha512.Sum512([]byte(Sender_id + "|" + Receiver_id)) //128桁の文字列のid
+	hex_string1 := hex.EncodeToString(hash_byte1[:])        //16進数表記
+
+	//UUID文字列をSHA512文字列にする
+	hash_byte2 := sha512.Sum512([]byte(Receiver_id + "|" + Sender_id)) //128桁の文字列のid
+	hex_string2 := hex.EncodeToString(hash_byte2[:])        //16進数表記
+
+	//センドトークンの情報
+	Stoken := database.Sent{
+		Sender_id:   Sender_id,        	//送った側のID
+		Receiver_id: Receiver_id,		//受け取る側のID
+		UID: 		 hex_string1,				//uuid
+		SendTime:    time.Now().Unix(),	//送った時間
+	}
+
+	Sender := dbconn.Where(database.Sent{UID: hex_string1}).Or(database.Sent{UID: hex_string2}).First(&database.Sent{}).RowsAffected
+	
+	if(Sender == 1){
+		//既に存在していたら
+		return "",errors.New("request_is_already_existing")
+	}
+
+	dbconn.Create(&Stoken)
+
+	return hex_string1,nil
+}

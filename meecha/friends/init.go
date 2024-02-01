@@ -1,5 +1,5 @@
 //初期化
-package auth
+package friends
 
 import (
 	"errors"

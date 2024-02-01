@@ -56,6 +56,22 @@ func Init() error {
 	}
 
 
+	//マイグレーション
+	err = dbconn.AutoMigrate(&Sent{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
+	//マイグレーション
+	err = dbconn.AutoMigrate(&Friends{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+	
 	IsInit = true
 	return nil
 }
