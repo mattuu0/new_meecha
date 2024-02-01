@@ -24,10 +24,15 @@ import (
 
 var (
 	//デフォルトアイコン
-	DefaultIcon string  = "./assets/default_icon.jpg"
+	DefaultIcon string = "./assets/default_icon.jpg"
 	//ユーザアイコンフォルダ
 	IconDir string = "./UserIcons"
 )
+
+func getFileNameWithoutExt(path string) string {
+    // Fixed with a nice method given by mattn-san
+    return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
+}
 
 func main() {
 	//データベース初期化
@@ -54,12 +59,55 @@ func main() {
 
 	//ミドルウェア設定
 	auth.Auth_Init(router)
+
+	//フォルダ開く
+	Icons,err := os.Open(IconDir)
+
+	//エラー処理
+	if err != nil {
+		log.Println("エラーです")
+		return
+	}
+
+	//アイコンファイル
+	IconFiles,err := Icons.ReadDir(0)
+
+	//エラー処理
+	if err != nil {
+		log.Println("エラーです")
+		return
+	}
+
+	//残っているユーザアイコンを消す
+	for _,val := range IconFiles {
+		//ユーザを取得する
+		_,err := auth.GetUser_ByID(getFileNameWithoutExt(val.Name()))
+
+		//エラー処理
+		//見つからないとき
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			//削除する
+			//エラー処理
+			if err := os.Remove(filepath.Join(IconDir,val.Name())); err != nil {
+				log.Println(err)
+				continue
+			}
+			continue
+		}
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+	}
+
 	router.Use(auth.Auth_Middleware())
 
 	//アイコン取得
 	router.GET("/geticon/:uid", func(ctx *gin.Context) {
 		//ユーザを検索
-		result,err := auth.GetUser_ByID(ctx.Param("uid"))
+		result, err := auth.GetUser_ByID(ctx.Param("uid"))
 
 		//エラー処理
 		if err != nil {
@@ -69,15 +117,15 @@ func main() {
 		}
 
 		//ユーザが見つからない場合
-		if (!result.IsFind) {
+		if !result.IsFind {
 			//404を返す
 			ctx.AbortWithStatus(404)
 			return
 		}
 
 		//画像のパス
-		response_path := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",result.UserData.UID))
-		imgbin,err := ioutil.ReadFile(response_path)
+		response_path := filepath.Join(IconDir, fmt.Sprintf("%s.jpg", result.UserData.UID))
+		imgbin, err := ioutil.ReadFile(response_path)
 
 		//エラー処理
 		if err != nil {
@@ -87,9 +135,9 @@ func main() {
 		}
 
 		//データ返却
-		ctx.Data(200,"image/jpeg",imgbin)
+		ctx.Data(200, "image/jpeg", imgbin)
 	})
-	
+
 	//アイコンを変更するエンドポイント
 	router.POST("/upicon", func(ctx *gin.Context) {
 		//認証情報を取得
@@ -129,7 +177,7 @@ func main() {
 		}
 
 		//保存するパス
-		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",Auth_Data.UserId))
+		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg", Auth_Data.UserId))
 		thumb.Save(savepath)
 	})
 
@@ -178,6 +226,51 @@ func main() {
 
 	//認証関連のグループ
 	authg := router.Group("/auth")
+
+	//アクセストークンリフレッシュ
+	authg.POST("/refresh",func(ctx *gin.Context)  {
+			//認証情報を取得
+		result, exits := ctx.Get(auth.KeyName)
+
+		//設定されていないとき戻る
+		if !exits {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//型を変換
+		Auth_Data := result.(auth.Auth_Result)
+
+		//認証に失敗してるとき戻る
+		if !Auth_Data.Success {
+			//403を返す
+			ctx.AbortWithStatus(403)
+			return
+		}
+
+		//アクセストークンかどうか
+		if !Auth_Data.IsRefresh {
+			//アクセストークンの場合エラー
+			ctx.AbortWithStatus(400)
+			return
+		}
+
+		//アクセストークン更新
+		atoken,err := auth.Refresh(Auth_Data.UserId)
+
+		//エラー処理
+		if err != nil {
+			log.Println(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+
+		//トークンを返す
+		ctx.JSON(http.StatusOK,gin.H{
+			"token" : atoken,
+		})
+	})
 
 	//ログアウト
 	authg.POST("/logout", func(ctx *gin.Context) {
@@ -252,6 +345,21 @@ func main() {
 
 		//エラー処理
 		if err != nil {
+			log.Println(err)
+			ctx.JSON(500, gin.H{
+				"message": "Server Error",
+			})
+			return
+		}
+
+		//失敗した場合
+		if !result.Success {
+			//失敗レスポンス
+			ctx.JSON(400, gin.H{
+				"message":      "Login failed",
+				"RefreshToken": "",
+				"AccessToken":  "",
+			})
 			return
 		}
 
@@ -280,7 +388,7 @@ func main() {
 		}
 
 		//ユーザネームとパスワード検証
-		if !auth.Validate_Name_Password(login_data.Name,login_data.Password) {
+		if !auth.Validate_Name_Password(login_data.Name, login_data.Password) {
 			ctx.JSON(400, gin.H{
 				"message": "Bad Request",
 			})
@@ -311,8 +419,8 @@ func main() {
 		}
 
 		//デフォルトアイコン生成
-		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg",result.UID))
-		copyfile(DefaultIcon,savepath)
+		savepath := filepath.Join(IconDir, fmt.Sprintf("%s.jpg", result.UID))
+		copyfile(DefaultIcon, savepath)
 
 		//成功レスポンス
 		ctx.JSON(200, gin.H{
@@ -324,31 +432,31 @@ func main() {
 	router.Run("127.0.0.1:12222") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-//ファイルをコピーする関数
-func copyfile(srcName string,dstName string) error {
+// ファイルをコピーする関数
+func copyfile(srcName string, dstName string) error {
 	//元ファイルを開く
 	src, err := os.Open(srcName)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	//コピー元ファイルを閉じる
-    defer src.Close()
+	defer src.Close()
 
 	//コピー先ファイルを作成
-    dst, err := os.Create(dstName)
-    if err != nil {
-        return err
-    }
+	dst, err := os.Create(dstName)
+	if err != nil {
+		return err
+	}
 
 	//コピー先ファイルを閉じる
-    defer dst.Close()
+	defer dst.Close()
 
 	//コピー
-    _, err = io.Copy(dst, src)
-    if  err != nil {
-        return err
-    }
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

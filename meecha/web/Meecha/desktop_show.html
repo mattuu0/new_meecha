@@ -1,31 +1,30 @@
 <!DOCTYPE html>
-{% load static %}
-
 <html lang="ja">
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'meecha/styles/desktop_show.css' %}">
+    <link rel="stylesheet" href="./styles/desktop_show.css">
     <title>設定</title>
+</head>
 
-  </head>
-  <body>
-    {% csrf_token %}
+<body>
 
     <header>
-      <p><img src="{% static 'meecha/images/meecha.png' %}" alt="" id="rogo"></p>
+        <p><img src="./images/meecha.png" alt="" id="rogo"></p>
     </header>
 
     <main>
-      <div class="sumaho">
-        <h1>スマホで見てね</h1>
-        <div class="qr" id="qrcode">
-          
+        <div class="sumaho">
+            <h1>スマホで見てね</h1>
+            <div class="qr" id="qrcode">
+
+            </div>
         </div>
-      </div>
     </main>
-    
-    <script src="{% static 'meecha/scripts/qrcode.min.js' %}"></script>
-    <script src="{% static 'meecha/scripts/desktop_show.js' %}"></script>
-  </body>
+
+    <script src="./scripts/qrcode.min.js"></script>
+    <script src="./scripts/desktop_show.js"></script>
+</body>
+
 </html>
