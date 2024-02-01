@@ -24,11 +24,15 @@ type RefreshToken struct {
 
 //位置情報
 type User_Location struct {
-	UID      string  `gorm:"primaryKey"` //トークンID
-	TokenID  string  //アクセストークンID
-	Lat      float64 //緯度
-	Lng      float64 //経度
-	WaitTime int64   //待機時間
+	UID string  `gorm:"primaryKey"` //トークンID
+	Lat float64 //緯度
+	Lng float64 //経度
+}
+
+//位置情報トークン
+type Location_Token struct {
+	TokenID  string `gorm:"primaryKey"` //トークンID
+	UID      string //トークンのユーザID
 }
 
 // フレンド一覧
