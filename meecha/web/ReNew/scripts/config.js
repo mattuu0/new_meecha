@@ -1,10 +1,10 @@
 //設定ファイル
 
 //サーバIP
-const ServerIp = "100.107.190.42:12222";
+const ServerIp = "100.111.29.70:12222";
 
 //サーバURL
-const server_url = "https://100.107.190.42:12222";
+const server_url = "https://" + ServerIp;
 
 //ログインURL
 const login_url = server_url + "/auth/login";

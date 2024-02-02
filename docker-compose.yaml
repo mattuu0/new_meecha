@@ -3,7 +3,7 @@ services:
     meecha:
         image: golang:1.20.13-bullseye
         ports:
-            - 8081:80
+            - 12222:12222
         volumes:
             - ./meecha:/root/meecha
         tty: true
