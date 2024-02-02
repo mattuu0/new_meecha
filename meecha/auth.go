@@ -99,6 +99,8 @@ func logout(ctx *gin.Context) {
 		return
 	}
 
+	//websocketを切断
+	ws_disconnect(Auth_Data.UserId)
 	//成功メッセージ
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Logout successful",

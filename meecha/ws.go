@@ -27,19 +27,33 @@ type ResponseMessage struct {
 	Payload interface{}
 }
 
+// Websocket切断
+func ws_disconnect(uid string) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	//Websocket接続を閉じる
+	wsconns[uid].Close()
+	//Websocket接続削除
+	delete(wsconns, uid)
+}
+
 // Websocket 関数
 func handle_ws(wsconn *websocket.Conn, userid string) {
 	// TODO
-	defer func () {
+	defer func() {
 		if err := recover(); err != nil {
 			log.Println(err)
 		}
 
 		//Websocket接続削除
-		delete(wsconns,userid)
+		delete(wsconns, userid)
 
 		//接続を閉じる
-		wsconn.Close()	
+		wsconn.Close()
 	}()
 
 	//ユーザIDを返す
@@ -74,27 +88,27 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 		}
 
 		//コマンド処理
-		switch (readmsg.Command) {
-			case "location":
-				payload := readmsg.Payload.(map[string]interface{})
+		switch readmsg.Command {
+		case "location":
+			payload := readmsg.Payload.(map[string]interface{})
 
-				//位置情報
-				token_userid,err := location.VerifyToken(payload["token"].(string))
+			//位置情報
+			token_userid, err := location.VerifyToken(payload["token"].(string))
 
-				//エラー処理
-				if err != nil {
-					log.Println(err)
-					break
-				}
+			//エラー処理
+			if err != nil {
+				log.Println(err)
+				break
+			}
 
-				//ユーザID比較
-				if userid != token_userid {
-					log.Println("userid error")
-					break
-				}
+			//ユーザID比較
+			if userid != token_userid {
+				log.Println("userid error")
+				break
+			}
 
-				log.Println(payload["lat"].(float64))
-				log.Println(payload["lng"].(float64))
+			log.Println(payload["lat"].(float64))
+			log.Println(payload["lng"].(float64))
 		}
 	}
 }

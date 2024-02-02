@@ -1,10 +1,11 @@
+
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import ssl,os
 
 keypath = os.path.abspath("server.key")
 crtpath = os.path.abspath("server.crt")
 
-os.chdir('./ReNew')
+os.chdir('./Meecha_web')
 
 port = 11333
 httpd = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)

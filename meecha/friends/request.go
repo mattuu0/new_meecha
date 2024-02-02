@@ -63,8 +63,15 @@ func Get_Received(Receiver_id string) (map[string]map[string]string, error){
 	
 	//受信した配列をすべてmapに代入
 	for i := 0; i < int(length); i++ {
+		uinfo,err := auth.GetUser_ByID(named_filter[i].Receiver_id)
+
+		//ユーザー情報取得に失敗
+		if err != nil{
+			continue
+		}
+
 		maps[named_filter[i].UID] = map[string]string{
-			"name":named_filter[i].Sender_id,					//送信した側の名前
+			"name":uinfo.UserData.Name,					//送信した側の名前
 			"time":strconv.Itoa(int(named_filter[i].SendTime)), //リクエストした時間
 		}
 	}
@@ -154,15 +161,9 @@ func Accept(UID string,Receiver_id string) (string,error){
 	//リクエストが存在しているか
 	Sid,Rid,err := Get_Request(UID)
 
-	log.Println(UID)
-	log.Println("sid")
-	log.Println(Sid)
-	log.Println("rid")
-	log.Println(Rid)
-
 	//リクエストでエラーならば
 	if err != nil {	
-		log.Println("error")
+		log.Println(err)
 		return "",err
 	}
 	
@@ -221,7 +222,7 @@ func Rejection(UID string,Receiver_id string) (error){
 
 	//リクエストが存在しているか
 	Sid,Rid,err := Get_Request(UID)
-	_=Sid
+	_ = Sid
 
 	//リクエストでエラーならば
 	if err != nil {	
