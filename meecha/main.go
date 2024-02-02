@@ -23,20 +23,19 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-
 var (
 	//デフォルトアイコン
 	DefaultIcon string = "./assets/default_icon.jpg"
 	//ユーザアイコンフォルダ
 	IconDir string = "./UserIcons"
-	
+
 	//ウェブソケット
 	wsconns = make(map[string]*websocket.Conn)
 )
 
 func getFileNameWithoutExt(path string) string {
-    // Fixed with a nice method given by mattn-san
-    return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
+	// Fixed with a nice method given by mattn-san
+	return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
 }
 
 func main() {
@@ -72,7 +71,7 @@ func main() {
 	auth.Auth_Init(router)
 
 	//フォルダ開く
-	Icons,err := os.Open(IconDir)
+	Icons, err := os.Open(IconDir)
 
 	//エラー処理
 	if err != nil {
@@ -81,7 +80,7 @@ func main() {
 	}
 
 	//アイコンファイル
-	IconFiles,err := Icons.ReadDir(0)
+	IconFiles, err := Icons.ReadDir(0)
 
 	//エラー処理
 	if err != nil {
@@ -90,16 +89,16 @@ func main() {
 	}
 
 	//残っているユーザアイコンを消す
-	for _,val := range IconFiles {
+	for _, val := range IconFiles {
 		//ユーザを取得する
-		_,err := auth.GetUser_ByID(getFileNameWithoutExt(val.Name()))
+		_, err := auth.GetUser_ByID(getFileNameWithoutExt(val.Name()))
 
 		//エラー処理
 		//見つからないとき
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			//削除する
 			//エラー処理
-			if err := os.Remove(filepath.Join(IconDir,val.Name())); err != nil {
+			if err := os.Remove(filepath.Join(IconDir, val.Name())); err != nil {
 				log.Println(err)
 				continue
 			}
@@ -113,13 +112,14 @@ func main() {
 		}
 	}
 
+	//ミドルウェア設定
 	router.Use(auth.Auth_Middleware())
 
 	//アイコン取得
-	router.GET("/geticon/:uid",geticon)
+	router.GET("/geticon/:uid", geticon)
 
 	//アイコンを変更するエンドポイント
-	router.POST("/upicon",uploadimg)
+	router.POST("/upicon", uploadimg)
 
 	//ping
 	router.POST("/user_info", get_user_info)
@@ -132,22 +132,22 @@ func main() {
 	friendg.Use(auth.Auth_Require_Middleware())
 
 	//フレンド一覧取得
-	friendg.POST("/getall",get_friends)
+	friendg.POST("/getall", get_friends)
 
 	//ユーザ検索
-	friendg.POST("/search",search_user)
+	friendg.POST("/search", search_user)
 
 	//リクエスト送信
-	friendg.POST("/request",send_request)
+	friendg.POST("/request", send_request)
 
 	//送信済み取得
-	friendg.POST("/get_sent",get_sent_request)
+	friendg.POST("/get_sent", get_sent_request)
 
 	//認証関連のグループ
 	authg := router.Group("/auth")
 
 	//アクセストークンリフレッシュ
-	authg.POST("/refresh",token_refresh)
+	authg.POST("/refresh", token_refresh)
 
 	//ログアウト
 	authg.POST("/logout", logout)
@@ -158,15 +158,15 @@ func main() {
 	//サインアップ
 	authg.POST("/signup", signup)
 
-	router.GET("/ws",func(ctx *gin.Context) {
-		defer func ()  {
+	router.GET("/ws", func(ctx *gin.Context) {
+		defer func() {
 			if rcover := recover(); rcover != nil {
 				log.Println("Panic : " + rcover.(string))
 			}
 		}()
 
 		//Websocket接続
-		wsconn,err := wsupgrader.Upgrade(ctx.Writer,ctx.Request,nil)
+		wsconn, err := wsupgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 
 		//エラー処理
 		if err != nil {
@@ -197,7 +197,7 @@ func main() {
 			//認証
 			if readmsg.Command == "auth" {
 				//認証
-				auth_result,err := auth.Valid_Token(readmsg.Payload.(string))
+				auth_result, err := auth.Valid_Token(readmsg.Payload.(string))
 
 				//エラー処理
 				if err != nil {
@@ -207,10 +207,10 @@ func main() {
 				}
 
 				//リフレッシュトークンの場合閉じる
-				if (auth_result.IsRefresh) {
+				if auth_result.IsRefresh {
 					break
 				}
-				
+
 				//ユーザIDを設定
 				userid = auth_result.Userid
 
@@ -224,7 +224,7 @@ func main() {
 		}
 
 		//コンティニュー
-		if (!ws_contiune) {
+		if !ws_contiune {
 			//切断
 			wsconn.Close()
 
@@ -233,10 +233,10 @@ func main() {
 		}
 
 		//スレッド作成
-		go handle_ws(wsconn,userid)
+		go handle_ws(wsconn, userid)
 	})
 
-	router.Run("127.0.0.1:12222") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router.RunTLS("0.0.0.0:12222","./keys/server.crt","./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 // ファイルをコピーする関数

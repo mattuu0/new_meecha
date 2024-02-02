@@ -60,7 +60,7 @@ function send_command(Command,payload,seriarize = true) {
 
 //WebSocket接続
 function connect_ws() {
-    wsconn = new WebSocket("ws://" + ServerIp + "/ws");
+    wsconn = new WebSocket("wss://" + ServerIp + "/ws");
 
     wsconn.onopen = function () {
         //認証コマンド
@@ -71,6 +71,8 @@ function connect_ws() {
     wsconn.onmessage = function (evt) {
         //JSONに変換
         const load_json = JSON.parse(evt.data);
+
+        console.log(evt.data);
 
         //コマンドに応じて処理
         switch (load_json.Command) {
