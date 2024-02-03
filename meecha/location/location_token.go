@@ -129,7 +129,7 @@ func Get_Token_ByUID(uid string) (string, error) {
 	var ctx = context.Background()
 
 	//トークン取得
-	result, err := rdb.Get(ctx,uid).Result() // キー名mykey1を取得
+	result, err := token_rdb.Get(ctx,uid).Result() // キー名mykey1を取得
 	if err != nil {
 		log.Println("Error: ", err)
 		return "",err
@@ -141,7 +141,7 @@ func Get_Token_ByUID(uid string) (string, error) {
 //トークン無効か
 func Disable_Geo_Token(uid string) error {
 	//トークン削除
-	delete(tokens,uid)
+	token_rdb.Del(context.Background(),uid)
 
 	return nil
 }
@@ -156,7 +156,7 @@ func registerToken(uid string,tokenid string) error {
 
 	var ctx = context.Background()
 	//トークン保存
-	err := rdb.Set(ctx,uid,tokenid,time.Duration(5)*time.Minute).Err()
+	err := token_rdb.Set(ctx,uid,tokenid,TokenExp + time.Duration(5)*time.Second).Err()
 
     if err != nil {
 		log.Println(err)

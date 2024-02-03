@@ -80,6 +80,14 @@ func Init() error {
 		return err
 	}
 
+	//マイグレーション
+	err = dbconn.AutoMigrate(&Ignore_Point{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
 	IsInit = true
 	return nil
 }

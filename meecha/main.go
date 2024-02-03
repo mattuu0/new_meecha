@@ -51,6 +51,7 @@ func main() {
 	auth.Init()
 
 	//位置情報初期化
+	location.TokenExp = time.Duration(3) * time.Second
 	location.Init("pMTpmD3N7qGdY4JSjc1fhBaOZyZXGh1e")
 
 	//フレンド初期化

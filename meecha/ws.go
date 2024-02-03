@@ -28,7 +28,7 @@ type ResponseMessage struct {
 	Payload interface{}
 }
 
-func Send_ws(uid string,command string,payload interface{}) (error) {
+func Send_ws(uid string, command string, payload interface{}) error {
 	//接続されていなかったらエラーを返す
 	if wsconns[uid] == nil {
 		return errors.New("not connected")
@@ -51,6 +51,7 @@ func Send_ws(uid string,command string,payload interface{}) (error) {
 
 	return nil
 }
+
 // Websocket切断
 func ws_disconnect(uid string) {
 	defer func() {
@@ -73,6 +74,12 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 		if err := recover(); err != nil {
 			log.Println(err)
 		}
+
+		//トークン無効化
+		location.Disable_Geo_Token(userid)
+
+		//位置情報削除
+		location.RemoveLocation(userid)
 
 		//Websocket接続削除
 		delete(wsconns, userid)
@@ -98,7 +105,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 	//ステータス更新
 	//長さ取得
-	distance,err := get_distance(userid)
+	distance, err := get_distance(userid)
 
 	//エラー処理
 	if err != nil {
@@ -144,14 +151,14 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				break
 			}
 
-			log.Println(payload["lat"].(float64))
-			log.Println(payload["lng"].(float64))
+			//位置情報更新
+			location.Update_Geo(userid, payload["lat"].(float64), payload["lng"].(float64))
 		}
 	}
 
 	//ステータス更新
 	//長さ取得
-	distance,err = get_distance(userid)
+	distance, err = get_distance(userid)
 
 	//エラー処理
 	if err != nil {
@@ -163,6 +170,9 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 	//トークン無効化
 	location.Disable_Geo_Token(userid)
+
+	//位置情報削除
+	location.RemoveLocation(userid)
 }
 
 // 位置情報用トークンを送る
@@ -201,6 +211,6 @@ func send_location_token(wsconn *websocket.Conn, userid string) {
 		}
 
 		//5秒待機
-		time.Sleep(time.Second * 3)
+		time.Sleep(location.TokenExp)
 	}
 }

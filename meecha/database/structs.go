@@ -31,11 +31,19 @@ type User_Location struct {
 
 // フレンド申請一覧
 type User_Data struct {
-	UID         string `gorm:"primaryKey"` //トークンID
-	Distance    int64	//距離
-	Status 		string //ステータス
+	UID      string `gorm:"primaryKey"` //ユーザID
+	Distance int64  //距離
+	Status   string //ステータス
 }
 
+// フレンド申請一覧
+type Ignore_Point struct {
+	Randid      string  `gorm:"primaryKey"` //ポイントID
+	UID         string  //ユーザID
+	Distance    int64   //距離
+	Latiubetude float64 //緯度
+	Longitude   float64 //経度
+}
 
 // フレンド一覧
 type Friends struct {
