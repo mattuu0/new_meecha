@@ -12,6 +12,13 @@ import (
 
 
 func GenToken(uid string) (string,error) {
+	//リカバー
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	
 	//初期化されているか
 	if (!database.IsInit) {
 		//初期化されていなかったらエラーを返す
