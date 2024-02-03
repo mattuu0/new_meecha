@@ -8,6 +8,8 @@ services:
             - ./meecha:/root/meecha
         tty: true
         restart: always
+        depends_on:
+            - redis
     redis:
         image: "redis:latest"
         ports:
