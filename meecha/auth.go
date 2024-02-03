@@ -155,6 +155,14 @@ func login(ctx *gin.Context) {
 		return
 	}
 
+	//メッセージ送信
+	send_ws(result.Userid, "Notify_Disconnect", map[string]string{
+		"code" : "409",
+		"message": "Logged in on another device",
+	})
+	//websocketを切断
+	ws_disconnect(result.Userid)
+
 	//成功レスポンス
 	ctx.JSON(200, gin.H{
 		"message":      "Login successful",

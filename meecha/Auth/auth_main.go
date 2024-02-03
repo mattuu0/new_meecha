@@ -191,6 +191,9 @@ func Login(uname string, password string) (LoginResult, error) {
 	result.AccessToken = tokens.AccessToken
 	result.RefreshToken = tokens.RefreshToken
 
+	//情報設定
+	result.Userid = uid
+
 	//成功にする
 	result.Success = true
 	result.IsFind = true

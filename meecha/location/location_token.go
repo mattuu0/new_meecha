@@ -124,6 +124,15 @@ func Get_Token_ByUID(uid string) (string, error) {
 
 	return result,nil
 }
+
+//トークン無効か
+func Disable_Geo_Token(uid string) error {
+	//トークン削除
+	delete(tokens,uid)
+
+	return nil
+}
+
 //トークンを登録
 func registerToken(uid string,tokenid string) error {
 	//初期化されているか

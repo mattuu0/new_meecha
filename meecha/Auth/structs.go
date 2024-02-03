@@ -28,4 +28,5 @@ type LoginResult struct {
 
 	RefreshToken string //リフレッシュトークン
 	AccessToken  string //あくせすトークン
+	Userid       string //ユーザID
 }

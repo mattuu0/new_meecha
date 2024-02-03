@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -27,6 +28,29 @@ type ResponseMessage struct {
 	Payload interface{}
 }
 
+func send_ws(uid string,command string,payload interface{}) (error) {
+	//接続されていなかったらエラーを返す
+	if wsconns[uid] == nil {
+		return errors.New("not connected")
+	}
+
+	//送信データ
+	write_data := ResponseMessage{
+		Command: command,
+		Payload: payload,
+	}
+
+	//書き込み
+	err := wsconns[uid].WriteJSON(write_data)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
 // Websocket切断
 func ws_disconnect(uid string) {
 	defer func() {
@@ -35,6 +59,7 @@ func ws_disconnect(uid string) {
 		}
 	}()
 
+	location.Disable_Geo_Token(uid)
 	//Websocket接続を閉じる
 	wsconns[uid].Close()
 	//Websocket接続削除
@@ -111,6 +136,9 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 			log.Println(payload["lng"].(float64))
 		}
 	}
+
+	//トークン無効化
+	location.Disable_Geo_Token(userid)
 }
 
 // 位置情報用トークンを送る
