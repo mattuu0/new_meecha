@@ -96,6 +96,18 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 		return
 	}
 
+	//ステータス更新
+	//長さ取得
+	distance,err := get_distance(userid)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+	}
+
+	//ステータス更新
+	update_data(userid, "online", distance)
+
 	//別スレッドで開始
 	go send_location_token(wsconn, userid)
 
@@ -136,6 +148,18 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 			log.Println(payload["lng"].(float64))
 		}
 	}
+
+	//ステータス更新
+	//長さ取得
+	distance,err = get_distance(userid)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+	}
+
+	//ステータス更新
+	update_data(userid, "offline", distance)
 
 	//トークン無効化
 	location.Disable_Geo_Token(userid)

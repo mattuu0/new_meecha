@@ -29,6 +29,13 @@ type User_Location struct {
 	Lng float64 //経度
 }
 
+// フレンド申請一覧
+type User_Data struct {
+	UID         string `gorm:"primaryKey"` //トークンID
+	Distance    int64	//距離
+	Status 		string //ステータス
+}
+
 
 // フレンド一覧
 type Friends struct {

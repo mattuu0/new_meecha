@@ -1,6 +1,9 @@
 package location
 
 import (
+	"log"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 
 	"meecha/database"
@@ -8,6 +11,8 @@ import (
 	"meecha/auth"
 
 	"fmt"
+
+	"context"
 )
 
 
@@ -18,7 +23,7 @@ func GenToken(uid string) (string,error) {
 			fmt.Println(err)
 		}
 	}()
-	
+
 	//初期化されているか
 	if (!database.IsInit) {
 		//初期化されていなかったらエラーを返す
@@ -121,12 +126,13 @@ func Get_Token_ByUID(uid string) (string, error) {
 		return "", auth.Get_Init_Error()
 	}
 
-	//トークン
-	result,found := tokens[uid]
+	var ctx = context.Background()
 
-	//トークンが見つからなかったらエラーを返す
-	if !found {
-		return "", fmt.Errorf("token not found")
+	//トークン取得
+	result, err := rdb.Get(ctx,uid).Result() // キー名mykey1を取得
+	if err != nil {
+		log.Println("Error: ", err)
+		return "",err
 	}
 
 	return result,nil
@@ -148,8 +154,15 @@ func registerToken(uid string,tokenid string) error {
 		return auth.Get_Init_Error()
 	}
 
+	var ctx = context.Background()
 	//トークン保存
-	tokens[uid] = tokenid
+	err := rdb.Set(ctx,uid,tokenid,time.Duration(5)*time.Minute).Err()
+
+    if err != nil {
+		log.Println(err)
+        return err
+    }
+
 
 	return nil
 }

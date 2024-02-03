@@ -72,6 +72,14 @@ func Init() error {
 		return err
 	}
 
+	//マイグレーション
+	err = dbconn.AutoMigrate(&User_Data{})
+
+	//エラー処理
+	if err != nil {
+		return err
+	}
+
 	IsInit = true
 	return nil
 }

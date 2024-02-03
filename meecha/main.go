@@ -31,6 +31,8 @@ var (
 
 	//ウェブソケット
 	wsconns = make(map[string]*websocket.Conn)
+
+	dbconn *gorm.DB = nil;
 )
 
 func getFileNameWithoutExt(path string) string {
@@ -42,6 +44,8 @@ func main() {
 	//データベース初期化
 	database.DBpath = "./meecha.db"
 	database.Init()
+
+	dbconn = database.GetDB()
 
 	//認証初期化
 	auth.Init()

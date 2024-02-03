@@ -2,13 +2,18 @@ package location
 
 import (
 	"errors"
-	"gorm.io/gorm"
+	"github.com/redis/go-redis/v9"
 
 	"meecha/database"
 )
 
 var (
-	dbconn *gorm.DB
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+		PoolSize: 1000,
+	})
 	isinit bool = false
 	secret []byte
 	tokens map[string]string = map[string]string{}
@@ -21,9 +26,6 @@ func Init(token string) error {
 		//初期化されていなかったらエラーを返す
 		return errors.New("database not initialized")
 	}
-
-	//データベース接続を取得
-	dbconn = database.GetDB()
 
 	//初期化済みにする
 	isinit = true

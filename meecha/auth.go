@@ -155,6 +155,18 @@ func login(ctx *gin.Context) {
 		return
 	}
 
+	//ユーザデータ初期化
+	err = init_user_data(result.Userid)
+
+	//エラー処理
+	if err != nil {
+		//エラーを返す
+		ctx.JSON(500, gin.H{
+			"message": "login failed",
+		})
+		return
+	}
+
 	//メッセージ送信
 	Send_ws(result.Userid, "Notify_Disconnect", map[string]string{
 		"code" : "409",
@@ -208,6 +220,18 @@ func signup(ctx *gin.Context) {
 
 	//さいんあっぷを試行
 	result, err := auth.CreateUser(login_data.Name, login_data.Password)
+
+	//エラー処理
+	if err != nil {
+		//エラーを返す
+		ctx.JSON(500, gin.H{
+			"message": "Sign up failed",
+		})
+		return
+	}
+
+	//ユーザデータ初期化
+	err = init_user_data(result.UID)
 
 	//エラー処理
 	if err != nil {

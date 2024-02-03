@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"meecha/auth"
+	"meecha/database"
 
 	"log"
 
@@ -135,4 +136,75 @@ func get_user_info(ctx *gin.Context) {
 		"userid": Auth_Data.UserId,
 		"name":   uresult.UserData.Name,
 	})
+}
+
+func init_user_data(uid string) error {
+	//ユーザデータ検索
+	search_data := dbconn.Where("uid = ?", uid).Find(&database.User_Data{})
+
+	//ユーザデータが見つかった場合
+	if search_data.RowsAffected > 0 {
+		return nil
+	}
+	//ユーザデータ初期化
+	user_data := database.User_Data{
+		UID: uid,
+		Distance: 50,
+		Status: "Offline",
+	}
+
+	//ユーザデータ保存
+	result := dbconn.Save(&user_data)
+
+	//エラー処理
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+//ステータス更新
+func update_data(uid string,status string,distance int64) error {
+	result_data := &database.User_Data{}
+
+	//ユーザデータ検索
+	result := dbconn.Where(database.User_Data{UID: uid}).First(result_data)
+
+	//エラー処理
+	if result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
+	}
+
+	//ステータス更新
+	result_data.Status = status
+	result_data.Distance = distance
+
+	//ユーザデータ保存
+	result = dbconn.Save(result_data)
+
+	//エラー処理
+	if result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
+	}
+
+	return nil
+}
+
+//ステータス更新
+func get_distance(uid string) (int64,error) {
+	result_data := &database.User_Data{}
+
+	//ユーザデータ検索
+	result := dbconn.Where(database.User_Data{UID: uid}).First(result_data)
+
+	//エラー処理
+	if result.Error != nil {
+		log.Println(result.Error)
+		return 0,result.Error
+	}
+
+	return result_data.Distance,nil
 }
