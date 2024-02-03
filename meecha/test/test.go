@@ -5,6 +5,10 @@ import (
 	auth "meecha/auth"
 	"meecha/database"
 	"meecha/friends"
+
+	"sync"
+
+	"time"
 )
 
 func main() {
@@ -74,32 +78,70 @@ func main() {
 	log.Println(err)
 	log.Println("")
 
-
 	log.Println("test承認")
 
-	aaaa,err1 := friends.Accept(fuck,"a")
-	_=aaaa
+	aaaa, err1 := friends.Accept(fuck, "a")
+	_ = aaaa
 
-	bbbb,err1 := friends.Accept(tee,"qqq")
-	_=err1
-	_=bbbb
-	
+	bbbb, err1 := friends.Accept(tee, "qqq")
+	_ = err1
+	_ = bbbb
 
 	log.Println("test送信取り消し")
-	err2 := friends.Delete_Request(nya,"q")
-	_=err2
+	err2 := friends.Delete_Request(nya, "q")
+	_ = err2
 
 	log.Println("test拒否")
 	log.Println(whaa)
-	err3 := friends.Rejection(whaa,"qa")
+	err3 := friends.Rejection(whaa, "qa")
 	log.Println(err3)
 
 	log.Println("testフレンド欄")
-	six_token,err := friends.Get_Friends("a")
+	six_token, err := friends.Get_Friends("a")
 	log.Println(six_token)
 	log.Println(err)
-	
+
 	log.Println("testフレンド消去")
-	err4 := friends.Delete_Friend(aaaa,"a")
+	err4 := friends.Delete_Friend(aaaa, "a")
 	log.Println(err4)
+
+	/*
+	var wg sync.WaitGroup
+
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			adddb()
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+
+	//100000回ループ
+	*/
+
+	
+}
+
+func adddb() {
+	dbconn := database.GetDB()
+
+	for i := 0; i < 100000; i++ {
+		randid1,_ := auth.Genid()
+		randid2,_ := auth.Genid()
+
+		fuid,_ := auth.Genid()
+
+		//フレンドトークンの情報
+		Ftoken := database.Friends{
+			UID: 		 fuid,					//uuid
+			Sender_id:   randid1,        			//送った側のID
+			Receiver_id: randid2,		    		//受け取る側のID
+			SendTime:    time.Now().Unix(),	    //送った時間
+		}
+
+		_ = dbconn.Create(&Ftoken)
+		log.Println(i)
+	}
 }

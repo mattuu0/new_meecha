@@ -149,8 +149,14 @@ func main() {
 	//送信済み取得
 	friendg.POST("/get_sent", get_sent_request)
 
-	//送信済み取得
+	//受信済み取得
 	friendg.POST("/get_recved", get_recved_request)
+
+	//フレンド削除
+	friendg.POST("/remove_friend", remove_friend)
+
+	//リクエストきゃせる
+	friendg.POST("/cancel_request", cancel_request)
 
 	//認証関連のグループ
 	authg := router.Group("/auth")

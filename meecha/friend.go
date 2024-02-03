@@ -128,6 +128,7 @@ func send_request(ctx *gin.Context) {
 
 	//エラー処理
 	if err != nil {
+		log.Println(err)
 		//重複エラー
 		if err.Error() == "request_is_already_existing" {
 			ctx.AbortWithStatus(409)
@@ -138,11 +139,70 @@ func send_request(ctx *gin.Context) {
 		return
 	}
 
-	log.Println(requestid)
+	//送信者取得
+	sender,err := auth.GetUser_ByID(uid)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//送信者名
+	sender_name := sender.UserData.Name
+
+	//通知を飛ばす
+	err = Send_ws(request_data.Targetid, "recv_request",sender_name)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+	}
+
+	//成功
+	ctx.JSON(200, map[string]string{"requestid": requestid})
 }
 
 type RequestData struct {
 	Requestid string //リクエストID
+}
+
+// リクエストキャンセル
+func cancel_request(ctx *gin.Context) {
+	//送信情報を取得
+	var request_data RequestData
+
+	//データを紐付ける
+	err := ctx.BindJSON(&request_data)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//ユーザID取得
+	uid, err := getid(ctx)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//リクエストキャンセル
+	err = friends.Delete_Request(request_data.Requestid,uid)
+
+	//エラー処理
+	if err != nil {
+		//エラー
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//成功
+	ctx.JSON(200, nil)
 }
 
 // リクエスト拒否
@@ -183,7 +243,7 @@ func reject_request(ctx *gin.Context) {
 	ctx.JSON(200, nil)
 }
 
-// リクエスト拒否
+// リクエスト承認
 func accept_request(ctx *gin.Context) {
 	//送信情報を取得
 	var request_data RequestData
@@ -209,14 +269,33 @@ func accept_request(ctx *gin.Context) {
 
 	log.Println(request_data)
 	//リクエスト承認
-	fid, err := friends.Accept(request_data.Requestid,uid)
+	fid,sid,err := friends.Accept(request_data.Requestid,uid)
 
 	//エラー処理
 	if err != nil {
+		if (err.Error() == "already_friend_registered") {
+			ctx.AbortWithStatus(409)
+			return
+		}
 		//エラー
 		ctx.AbortWithStatus(500)
 		return
 	}
+
+	//承認者取得
+	accepter,err := auth.GetUser_ByID(uid)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//送信者名
+	accepter_name := accepter.UserData.Name
+
+	//通知を飛ばす
+	Send_ws(sid, "accept_request",accepter_name)
 
 	//成功
 	ctx.JSON(200, gin.H{
@@ -268,4 +347,47 @@ func get_recved_request(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, result)
+}
+
+// フレンドデータ
+type FriendData struct {
+	Friendid string //フレンドID
+}
+
+//フレンド削除
+func remove_friend(ctx *gin.Context) {
+	//認証情報を取得
+	uid, err := getid(ctx)
+
+	//エラー処理
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//送信情報を取得
+	var friend_data FriendData
+
+	//データを紐付ける
+	err = ctx.BindJSON(&friend_data)
+
+	//エラー処理
+	if err != nil {
+		log.Println(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//フレンド削除
+	err = friends.Delete_Friend(friend_data.Friendid,uid)
+
+	//エラー処理
+	if err != nil {
+		//エラー
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	//成功
+	ctx.JSON(200, nil)
 }

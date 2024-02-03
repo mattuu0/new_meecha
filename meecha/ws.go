@@ -28,7 +28,7 @@ type ResponseMessage struct {
 	Payload interface{}
 }
 
-func send_ws(uid string,command string,payload interface{}) (error) {
+func Send_ws(uid string,command string,payload interface{}) (error) {
 	//接続されていなかったらエラーを返す
 	if wsconns[uid] == nil {
 		return errors.New("not connected")
@@ -143,6 +143,14 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 // 位置情報用トークンを送る
 func send_location_token(wsconn *websocket.Conn, userid string) {
+	// TODO
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+
+	}()
+
 	for {
 		//トークン生成
 		token, err := location.GenToken(userid)

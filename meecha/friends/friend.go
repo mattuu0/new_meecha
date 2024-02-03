@@ -66,9 +66,36 @@ func Get_Friends(Acquirer_id string) (map[string]map[string]string,error){
 
 	//送信した配列をすべてmapに代入
 	for i := 0; i < int(length); i++ {
+		//送信者取得
+		sender,err := auth.GetUser_ByID(named_filter[i].Sender_id)
+
+		//ユーザー情報取得に失敗
+		if err != nil{
+			continue
+		}
+
+		//受信者取得
+		receiver,err := auth.GetUser_ByID(named_filter[i].Receiver_id)
+
+		//ユーザー情報取得に失敗
+		if err != nil{
+			continue
+		}
+
+		//相手のデータ
+		aite_data := sender.UserData
+		//相手を判定
+		if Acquirer_id == named_filter[i].Sender_id{
+			aite_data = receiver.UserData
+		}
+
 		maps[named_filter[i].UID] = map[string]string{
-			Sid:named_filter[i].Sender_id,					//取得者の名前
-			Rid:named_filter[i].Receiver_id,					//受信した側の名前
+			"Sname":sender.UserData.Name,						//取得者の名前
+			"Sid" : sender.UserData.UID,						//送信した側のID
+			"Rid" : receiver.UserData.UID,						//受信した側のID
+			"Rname":receiver.UserData.Name,						//受信した側の名前
+			"aite" : aite_data.Name,							//相手の名前
+			"aiteid" : aite_data.UID,							//相手のID
 			"time":strconv.Itoa(int(named_filter[i].SendTime)), //フレンドになった時間
 		}
 	}

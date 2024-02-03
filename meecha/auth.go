@@ -156,7 +156,7 @@ func login(ctx *gin.Context) {
 	}
 
 	//メッセージ送信
-	send_ws(result.Userid, "Notify_Disconnect", map[string]string{
+	Send_ws(result.Userid, "Notify_Disconnect", map[string]string{
 		"code" : "409",
 		"message": "Logged in on another device",
 	})

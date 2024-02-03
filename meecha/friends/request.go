@@ -110,6 +110,7 @@ func Get_Sent(Sender_id string) (map[string]map[string]string, error){
 		}
 
 		maps[named_filter[i].UID] = map[string]string{
+			"uid":named_filter[i].Receiver_id,//受信した側のID
 			"name":uinfo.UserData.Name,//受信した側の名前
 			"time":strconv.Itoa(int(named_filter[i].SendTime)), //リクエストした時間
 		}
@@ -156,7 +157,7 @@ func Get_Request(UID string)(string,string,error) {
 }
 
 //承認の一連メソッド
-func Accept(UID string,Receiver_id string) (string,error){
+func Accept(UID string,Receiver_id string) (string,string,error){
 
 	//リクエストが存在しているか
 	Sid,Rid,err := Get_Request(UID)
@@ -164,12 +165,12 @@ func Accept(UID string,Receiver_id string) (string,error){
 	//リクエストでエラーならば
 	if err != nil {	
 		log.Println(err)
-		return "",err
+		return "","",err
 	}
 	
 	//受信者側が一致していない時
 	if Rid != Receiver_id {
-		return "",errors.New("user_mismatch_existing")
+		return "","",errors.New("user_mismatch_existing")
 	}
 
 	//フレンドであることをDBに登録
@@ -178,7 +179,7 @@ func Accept(UID string,Receiver_id string) (string,error){
 	//フレンドDB登録でエラーならば
 	if err != nil {	
 		log.Println("errors")
-		return "",err
+		return "","",err
 	}
 
 	log.Println("承認の取り消し")
@@ -187,7 +188,7 @@ func Accept(UID string,Receiver_id string) (string,error){
 	//フレンドリクエストをDBから消去
 	dbconn.Delete(database.Sent{},database.Sent{UID: UID})
 
-	return fuid,err
+	return fuid,Sid,err
 }
 
 //フレンドリクエストを取り消し
