@@ -343,6 +343,12 @@ func GetLocation(uid string) (Point, error) {
 		return Point{}, err
 	}
 
+	//エラー
+	if (getopos[0] == nil) {
+		//位置情報なし
+		return Point{}, errors.New("No Location")
+	}
+
 	//結果設定
 	result_point := Point{}
 	result_point.Lat = getopos[0].Latitude
