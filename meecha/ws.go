@@ -176,7 +176,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 						stop_notify(notify_dict, key, userid)
 					}
 				}
-				
+
 				log.Println(err)
 				continue
 			}
@@ -251,7 +251,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				}
 
 				//自分の設定距離取得
-				jibunn_distance, err := location.Get_Notify_distance(val)
+				jibunn_distance, err := location.Get_Notify_distance(userid)
 
 				//エラー処理
 				if err != nil {
@@ -285,6 +285,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 					check_distance = aite_distance
 				}
 
+				log.Println(check_distance)
+
 				//距離取得
 				distance := location.Get_Distance(point_data, friend_point_data)
 
@@ -299,7 +301,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				}
 
 				//初回かどうか
-				is_first := false;
+				is_first := false
 
 				//初回か判定
 				if _, ok := notify_dict[val]; !ok {
@@ -308,12 +310,13 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 				//相手に通知
 				Send_ws(val, "near_friend", map[string]interface{}{
-					"userid": userid,
-					"unane":  mydata.UserData.Name,
-					"is_first":  is_first,
+					"userid":   userid,
+					"unane":    mydata.UserData.Name,
+					"is_first": is_first,
+					"is_self":  false,
+					"point":    point_data,
 				})
 
-				
 				//相手のデータ取得
 				aite_data, err := auth.GetUser_ByID(val)
 
@@ -329,9 +332,11 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 				//自分に通知
 				Send_ws(userid, "near_friend", map[string]interface{}{
-					"userid": val,
-					"unane":  aite_data.UserData.Name,
-					"is_first":  is_first,
+					"userid":   val,
+					"unane":    aite_data.UserData.Name,
+					"is_first": is_first,
+					"is_self":  true,
+					"point":    friend_point_data,
 				})
 
 				//通知者に設定
