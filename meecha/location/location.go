@@ -89,9 +89,6 @@ func Add_Ignore_Point(uid string, point Ignore_point) (string, error) {
 		return "", result.Error
 	}
 
-	//情報更新
-	Refresh_Ignore_Point(uid)
-
 	return randid, nil
 }
 
@@ -242,6 +239,26 @@ func Update_Ignore_Point(uid string,pointid string, point Ignore_point) (string,
 	return pointid, nil
 }
 
+//除外ポイント全削除
+func Remove_All_Ignore_Point(uid string) (error) {
+	if !isinit {
+		//初期化されていなかったらエラーを返す
+		return errors.New("Not Initialized")
+	}
+
+	//ユーザIDが同じものを一括削除
+	result := dbconn.Where(database.Ignore_Point{UID: uid}).Delete(&database.Ignore_Point{})
+
+	//エラー処理
+	if result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
+	}
+
+	return nil
+}
+
+//除外ポイント削除
 func Remove_Ignore_Point(uid string, pointid string) (string, error) {
 	if !isinit {
 		//初期化されていなかったらエラーを返す

@@ -129,7 +129,15 @@ func main() {
 	//ping
 	router.POST("/user_info", get_user_info)
 
-	//通知距離更新
+	//位置情報グループ
+	location_group := router.Group("/location")
+	location_group.Use(auth.Auth_Middleware())
+	location_group.Use(auth.Auth_Require_Middleware())
+	//除外設定更新
+	location_group.POST("/save_ignore_point", save_ignore_point)
+
+	//除外設定取得
+	location_group.POST("/load_ignore_point", get_ignore_point)
 
 	//フレンド
 	friendg := router.Group("/friend")
