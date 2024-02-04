@@ -32,6 +32,22 @@ var (
 		PoolSize: 1000,
 	})
 
+	Distance_exp = time.Duration(30) * time.Minute
+	distance_rdb = redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "", // no password set
+		DB:       3,  // use default DB
+		PoolSize: 1000,
+	})
+
+	Friend_exp = time.Duration(30) * time.Minute
+	friend_rdb = redis.NewClient(&redis.Options{
+		Addr:     "redis:6379",
+		Password: "", // no password set
+		DB:       5,  // use default DB
+		PoolSize: 1000,
+	})
+
 	LocationKey = "location"
 	isinit bool = false
 	secret []byte

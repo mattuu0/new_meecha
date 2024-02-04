@@ -374,3 +374,20 @@ func Get_Distance(point1 Point,point2 Point) int64 {
 
 	return int64(dist)
 }
+
+
+//通知距離を更新する
+func Update_Notification_Distance(uid string, distance int64) error {
+	if !isinit {
+		//初期化されていなかったらエラーを返す
+		return errors.New("Not Initialized")
+	}
+
+	//通知距離更新
+	if err := distance_rdb.Set(context.Background(), uid, distance,Distance_exp).Err(); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}

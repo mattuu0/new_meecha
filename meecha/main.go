@@ -139,6 +139,12 @@ func main() {
 	//除外設定取得
 	location_group.POST("/load_ignore_point", get_ignore_point)
 
+	//通知距離取得
+	location_group.POST("/get_notify_distance", Get_notify_Distance)
+
+	//通知距離設定
+	location_group.POST("/set_notify_distance", Set_notify_Distance)
+
 	//フレンド
 	friendg := router.Group("/friend")
 

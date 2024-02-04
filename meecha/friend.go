@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"meecha/friends"
+	"meecha/location"
 
 	"meecha/auth"
 )
@@ -297,6 +298,12 @@ func accept_request(ctx *gin.Context) {
 	//通知を飛ばす
 	Send_ws(sid, "accept_request",accepter_name)
 
+	//自信のキャッシュ更新
+	location.Update_Cache(uid)
+
+	//相手のキャッシュ更新
+	location.Update_Cache(sid)
+
 	//成功
 	ctx.JSON(200, gin.H{
 		"friendid": fid,
@@ -378,8 +385,8 @@ func remove_friend(ctx *gin.Context) {
 		return
 	}
 
-	//フレンド削除
-	err = friends.Delete_Friend(friend_data.Friendid,uid)
+	//フレンド削除 (相手のID取得)
+	aiteid,err := friends.Delete_Friend(friend_data.Friendid,uid)
 
 	//エラー処理
 	if err != nil {
@@ -387,6 +394,12 @@ func remove_friend(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
+
+	//キャッシュ更新
+	location.Update_Cache(uid)
+
+	//相手のキャッシュ更新
+	location.Update_Cache(aiteid)
 
 	//成功
 	ctx.JSON(200, nil)

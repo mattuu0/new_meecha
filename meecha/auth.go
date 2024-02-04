@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"meecha/auth"
+	"meecha/location"
 
 	"log"
 
@@ -156,7 +157,7 @@ func login(ctx *gin.Context) {
 	}
 
 	//ユーザデータ初期化
-	err = init_user_data(result.Userid)
+	err = location.Init_user_data(result.Userid)
 
 	//エラー処理
 	if err != nil {
@@ -231,7 +232,7 @@ func signup(ctx *gin.Context) {
 	}
 
 	//ユーザデータ初期化
-	err = init_user_data(result.UID)
+	err = location.Init_user_data(result.UID)
 
 	//エラー処理
 	if err != nil {

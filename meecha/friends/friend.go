@@ -108,14 +108,14 @@ func Get_Friends(Acquirer_id string) (map[string]map[string]string,error){
 	return maps,nil
 }
 
-//フレンドを消す
-func Delete_Friend(UID string,Deleter_id string) (error){
+//フレンドを消す (相手のIDを返す)
+func Delete_Friend(UID string,Deleter_id string) (string,error){
 
 	//フレンドが存在しているか
 	existence,err := Get_Friends(Deleter_id)
 
 	if  err != nil{
-		return errors.New("friends_not_existence")
+		return "",errors.New("friends_not_existence")
 	}
 
 	user1 := (existence[UID][Rid])
@@ -125,15 +125,25 @@ func Delete_Friend(UID string,Deleter_id string) (error){
 	//リクエストでエラーならば
 	if err != nil {	
 		log.Println("error")
-		return err
+		return "",err
 	}
 	
+	//相手のID
+	returnid := user1
+
+	//相手のIDを取得
+
+	//削除者と1のIDが同じ場合
+	if (UID == user1) {
+		returnid = user2
+	}
+
 	log.Println(user1)
 	log.Println(user2)
 
 	//リクエスト者とUIDが一致していない時
 	if !(user1 == Deleter_id || user2 == Deleter_id) {
-		return errors.New("user_mismatch_existing")
+		return "",errors.New("user_mismatch_existing")
 	}
 
 	log.Println("フレンドの消去")
@@ -142,7 +152,7 @@ func Delete_Friend(UID string,Deleter_id string) (error){
 	//フレンドをDBから消去
 	dbconn.Delete(database.Friends{},database.Friends{UID: UID})
 
-	return err
+	return returnid,err
 }
 
 

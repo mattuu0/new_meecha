@@ -105,7 +105,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 	//ステータス更新
 	//長さ取得
-	distance, err := get_distance(userid)
+	distance, err := location.Get_Notify_distance(userid)
 
 	//エラー処理
 	if err != nil {
@@ -113,7 +113,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 	}
 
 	//ステータス更新
-	update_data(userid, "online", distance)
+	location.Update_data(userid, distance,"online")
 
 	//別スレッドで開始
 	go send_location_token(wsconn, userid)
@@ -160,13 +160,86 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				continue
 			}
 
-			
-		}
+			//自分の位置情報
+			point_data := location.Point{Lat: payload["lat"].(float64), Lon: payload["lng"].(float64)}
+			//位置情報検証
+			result,err := location.Validate_Geo(userid, point_data)
+
+			//エラー処理
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			//除外エリアに入っている場合
+			if !result {
+				log.Println("除外エリアです")
+				//戻る
+				continue
+			}
+
+			//フレンド取得
+			friends,err := location.Get_Friends(userid)
+
+			//エラー処理
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			for _,val := range friends {
+				//フレンドの位置を取得
+				friend_point_data,err := location.GetLocation(val)
+
+				//エラー処理
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				//フレンドが除外範囲にいるか
+				result,err := location.Validate_Geo(val, friend_point_data)
+
+				//エラー処理
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				//除外範囲にいる場合
+				if !result {
+					continue
+				}
+
+				//自分の設定距離取得
+				jibunn_distance,err := location.Get_Notify_distance(val)
+
+				//エラー処理
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				//相手の設定距離取得
+				aite_distance,err := location.Get_Notify_distance(val)
+
+				//エラー処理
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				check_distance
+
+				//距離取得
+				kyori := location.Get_Distance(point_data,friend_point_data)
+			}
+		}	
 	}
 
 	//ステータス更新
 	//長さ取得
-	distance, err = get_distance(userid)
+	distance, err = location.Get_Notify_distance(userid)
 
 	//エラー処理
 	if err != nil {
@@ -174,7 +247,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 	}
 
 	//ステータス更新
-	update_data(userid, "offline", distance)
+	location.Update_data(userid, distance,"offline")
 
 	//トークン無効化
 	location.Disable_Geo_Token(userid)
