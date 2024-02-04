@@ -9,7 +9,6 @@ import (
 
 	"math"
 
-	"github.com/tidwall/geodesic"
 )
 
 func googleGeosail(LatA, LngA, LatB, LngB float64) float64 {
@@ -24,33 +23,42 @@ func main() {
 	database.Init()
 	location.Init("test")
 
-	/*
-		pointid, err := location.Add_Ignore_Point("test2", 34.730792491372604, 135.59393416756606, 18300)
+	ignore_points,err := location.Get_Ignore_Points("test2")
 
-		if err != nil {
-			log.Println(err)
-			return
-		}
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-		_ = pointid
-	*/
+	var keys []string
+	for key := range ignore_points {
+		keys = append(keys, key)
+	}
 
-	tokyo := Point{34.67724465131828, 135.5225283835263}
-	osaka := Point{34.72009609621383, 135.70751754269648}
+	location.Remove_Ignore_Point("test2",keys[0])
 
-	res1 := haversine(tokyo, osaka)
-	res2 := vincenty(tokyo, osaka)
+	point := location.Ignore_point{
+		Latitude: 34.730792491372604,
+		Longitude: 135.59393416756606,
+		Distance: 18300,
+	}
 
-	var dist float64
-	geodesic.WGS84.Inverse(tokyo.Lat, tokyo.Lon, osaka.Lat, osaka.Lon, &dist, nil, nil)
-	log.Printf("%f meters\n", dist)
+	pointid, err := location.Add_Ignore_Point("test2",point)
 
-	log.Println(res2)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	log.Println(res1)
+	point2 := location.Ignore_point{
+		Latitude: 64.730792491372604,
+		Longitude: 138.59393416756606,
+		Distance: 100,
+	}
 
-	location.Refresh_Ignore_Point("test2")
-
+	location.Update_Ignore_Point("test2",pointid,point2)
+	
+	log.Println(location.Get_Ignore_Points("test2"))
 	//location.Remove_Ignore_Point("test", pointid)
 }
 

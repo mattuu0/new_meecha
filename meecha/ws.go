@@ -152,7 +152,15 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 			}
 
 			//位置情報更新
-			location.Update_Geo(userid, payload["lat"].(float64), payload["lng"].(float64))
+			err = location.Update_Geo(userid, payload["lat"].(float64), payload["lng"].(float64))
+
+			//エラー処理
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			
 		}
 	}
 

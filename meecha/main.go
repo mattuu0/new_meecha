@@ -129,6 +129,8 @@ func main() {
 	//ping
 	router.POST("/user_info", get_user_info)
 
+	//通知距離更新
+
 	//フレンド
 	friendg := router.Group("/friend")
 
