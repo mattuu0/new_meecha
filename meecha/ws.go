@@ -214,6 +214,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 			}
 
 			for _, val := range friends {
+
 				//フレンドの位置を取得
 				friend_point_data, err := location.GetLocation(val)
 
@@ -297,14 +298,24 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 					continue
 				}
 
+				//初回かどうか
+				is_first := false;
+
+				//初回か判定
+				if _, ok := notify_dict[val]; !ok {
+					is_first = true
+				}
+
 				//相手に通知
 				Send_ws(val, "near_friend", map[string]interface{}{
 					"userid": userid,
 					"unane":  mydata.UserData.Name,
+					"is_first":  is_first,
 				})
 
+				
 				//相手のデータ取得
-				aite_data, err := auth.GetUser_ByID(userid)
+				aite_data, err := auth.GetUser_ByID(val)
 
 				//エラー処理
 				if err != nil {
@@ -320,6 +331,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				Send_ws(userid, "near_friend", map[string]interface{}{
 					"userid": val,
 					"unane":  aite_data.UserData.Name,
+					"is_first":  is_first,
 				})
 
 				//通知者に設定
