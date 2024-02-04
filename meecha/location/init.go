@@ -18,6 +18,7 @@ var (
 		PoolSize: 1000,
 	})
 
+	Location_exp = time.Duration(30) * time.Minute
 	location_rdb = redis.NewClient(&redis.Options{
 		Addr:     "redis:6379",
 		Password: "", // no password set

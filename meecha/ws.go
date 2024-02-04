@@ -362,6 +362,13 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 	//位置情報削除
 	location.RemoveLocation(userid)
+
+	//切断通知
+	for key := range notify_dict {
+		if _, ok := notify_dict[key]; ok {
+			stop_notify(notify_dict, key, userid)
+		}
+	}
 }
 
 func stop_notify(notify_dict map[string]string, uid string, myid string) {

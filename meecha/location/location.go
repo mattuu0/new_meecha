@@ -26,7 +26,7 @@ func Update_Geo(uid string, Latitude float64, Longitude float64) error {
 
 	if location_rdb.Exists(ctx, uid).Val() > 0 {
 		//有効期限設定
-		if err := location_rdb.Expire(ctx, uid, time.Duration(5)*time.Minute).Err(); err != nil {
+		if err := location_rdb.Expire(ctx, uid, Location_exp).Err(); err != nil {
 			return err
 		}
 	}
@@ -38,7 +38,7 @@ func Update_Geo(uid string, Latitude float64, Longitude float64) error {
 	}
 
 	//有効期限設定
-	if err := location_rdb.Expire(ctx, uid, time.Duration(5)*time.Minute).Err(); err != nil {
+	if err := location_rdb.Expire(ctx, uid, Location_exp).Err(); err != nil {
 		return err
 	}
 
