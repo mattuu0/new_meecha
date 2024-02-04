@@ -272,7 +272,8 @@ func main() {
 		go handle_ws(wsconn, userid)
 	})
 
-	router.RunTLS("0.0.0.0:12222","./keys/server.crt","./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	router.Run("0.0.0.0:12222")
+	//router.RunTLS("0.0.0.0:12222","./keys/server.crt","./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 // ファイルをコピーする関数
