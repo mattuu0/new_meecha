@@ -72,9 +72,6 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	//ミドルウェア設定
-	auth.Auth_Init(router)
-
 	//フォルダ開く
 	Icons, err := os.Open(IconDir)
 

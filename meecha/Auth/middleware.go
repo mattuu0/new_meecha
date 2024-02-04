@@ -21,13 +21,6 @@ var (
 	KeyName    string = "Auth" //認証結果のキー
 )
 
-// 設定
-func Auth_Init(router *gin.Engine) {
-	router.LoadHTMLFiles(
-		"./templates/Auth/Auth_Error.html",
-	)
-}
-
 // 認証ミドルウェア
 func Auth_Middleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
