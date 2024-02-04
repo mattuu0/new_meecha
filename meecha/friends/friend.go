@@ -132,9 +132,8 @@ func Delete_Friend(UID string,Deleter_id string) (string,error){
 	returnid := user1
 
 	//相手のIDを取得
-
 	//削除者と1のIDが同じ場合
-	if (UID == user1) {
+	if (Deleter_id == user1) {
 		returnid = user2
 	}
 
