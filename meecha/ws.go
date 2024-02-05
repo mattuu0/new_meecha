@@ -297,6 +297,9 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 					//距離より大きい場合
 					continue
 				}
+				
+				log.Println(check_distance)
+				log.Println(distance)
 
 				log.Println(check_distance)
 				log.Println(distance)
