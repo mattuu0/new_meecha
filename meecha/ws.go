@@ -285,8 +285,6 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 					check_distance = aite_distance
 				}
 
-				log.Println(check_distance)
-
 				//距離取得
 				distance := location.Get_Distance(point_data, friend_point_data)
 
@@ -299,6 +297,9 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 					//距離より大きい場合
 					continue
 				}
+				
+				log.Println(check_distance)
+				log.Println(distance)
 
 				//初回かどうか
 				is_first := false
