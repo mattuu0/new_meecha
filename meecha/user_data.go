@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -40,17 +39,9 @@ func geticon(ctx *gin.Context) {
 
 	//画像のパス
 	response_path := filepath.Join(IconDir, fmt.Sprintf("%s.jpg", result.UserData.UID))
-	imgbin, err := ioutil.ReadFile(response_path)
-
-	//エラー処理
-	if err != nil {
-		//サーバエラー
-		ctx.AbortWithStatus(500)
-		return
-	}
 
 	//データ返却
-	ctx.Data(200, "image/jpeg", imgbin)
+	ctx.File(response_path)
 }
 
 //画像アップロード
@@ -84,7 +75,7 @@ func uploadimg(ctx *gin.Context) {
 	}
 
 	//アイコンをリサイズ
-	thumb, err := imgupload.ThumbnailJPEG(img, 300, 300, 50)
+	thumb, err := imgupload.ThumbnailJPEG(img, 150, 150, 10)
 	if err != nil {
 		log.Println(err)
 		ctx.AbortWithStatus(500)
