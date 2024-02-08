@@ -164,6 +164,15 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				continue
 			}
 
+			//既存のトークン無効か
+			err = location.Disable_Geo_Token(userid)
+
+			//エラー処理
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
 			//自分の位置情報
 			point_data := location.Point{Lat: payload["lat"].(float64), Lon: payload["lng"].(float64)}
 			//位置情報検証

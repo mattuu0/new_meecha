@@ -156,7 +156,7 @@ func registerToken(uid string,tokenid string) error {
 
 	var ctx = context.Background()
 	//トークン保存
-	err := token_rdb.Set(ctx,uid,tokenid,TokenExp + time.Duration(5)*time.Second).Err()
+	err := token_rdb.Set(ctx,uid,tokenid,TokenExp + time.Duration(10)*time.Second).Err()
 
     if err != nil {
 		log.Println(err)
