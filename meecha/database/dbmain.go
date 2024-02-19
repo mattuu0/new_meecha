@@ -1,8 +1,13 @@
 package database
 
 import (
-	"gorm.io/gorm"
+	"fmt"
+
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+
+	"os"
 )
 
 var (
@@ -12,16 +17,33 @@ var (
 )
 
 func Init() error {
-	//データベースを開く
-	db,err := gorm.Open(sqlite.Open(DBpath))
+	debug_mode := os.Getenv("DEBUG_MODE")
 
-	//エラー処理
-	if err != nil {
-		return err
+	var err error
+	//デバッグモード
+	if debug_mode == "true" {
+		DBpath = "./meecha.db"
+		dbconn,err = gorm.Open(sqlite.Open(DBpath))
+
+		//エラー処理
+		if err != nil {
+			return err
+		}
+
+	} else {
+		uname := os.Getenv("POSTGRES_USER")
+		dbname := os.Getenv("POSTGRES_DB")
+		password := os.Getenv("POSTGRES_PASSWORD")
+		host := os.Getenv("POSTGRES_HOST")
+		port := os.Getenv("POSTGRES_PORT")
+
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",host,uname,password,dbname,port)
+		dbconn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		//エラー処理
+		if err != nil {
+			return err
+		}
 	}
-
-	//グローバル変数に保存
-	dbconn = db
 
 	//マイグレーション
 	err = dbconn.AutoMigrate(&User{})

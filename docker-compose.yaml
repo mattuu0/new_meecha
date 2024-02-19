@@ -10,7 +10,18 @@ services:
         restart: always
         depends_on:
             - redis
+            - postgresql
     redis:
         image: "redis:latest"
         ports:
             - "6379:6379"
+    postgresql:
+        image: postgres:12.18-bullseye
+        environment:
+            - TZ=Asia/Tokyo
+        ports:
+            - "15432:5432"
+        env_file:
+            - .env
+        volumes:
+            - ./postgresql:/var/lib/postgresql/data

@@ -21,6 +21,8 @@ import (
 	"github.com/gin-contrib/cors"
 
 	"github.com/gorilla/websocket"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -32,7 +34,7 @@ var (
 	//ウェブソケット
 	wsconns = make(map[string]*websocket.Conn)
 
-	dbconn *gorm.DB = nil;
+	dbconn *gorm.DB = nil
 )
 
 func getFileNameWithoutExt(path string) string {
@@ -40,9 +42,18 @@ func getFileNameWithoutExt(path string) string {
 	return filepath.Base(path[:len(path)-len(filepath.Ext(path))])
 }
 
+func loadEnv() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
+
 func main() {
+	//環境変数読み込み
+	loadEnv()
+
 	//データベース初期化
-	database.DBpath = "./meecha.db"
 	database.Init()
 
 	dbconn = database.GetDB()
@@ -52,7 +63,7 @@ func main() {
 
 	//位置情報初期化
 	location.TokenExp = time.Duration(3) * time.Second
-	location.Init("pMTpmD3N7qGdY4JSjc1fhBaOZyZXGh1e")
+	location.Init(os.Getenv("LOCATION_TOKEN"))
 
 	//フレンド初期化
 	friends.Init()
@@ -269,8 +280,15 @@ func main() {
 		go handle_ws(wsconn, userid)
 	})
 
-	router.Run("0.0.0.0:12222")
-	//router.RunTLS("0.0.0.0:12222","./keys/server.crt","./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	debug_mode := os.Getenv("DEBUG_MODE")
+
+	//デバッグモード
+	if debug_mode == "false" {
+		router.RunTLS("0.0.0.0:12222", "./keys/server.crt", "./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	} else {
+		router.Run("0.0.0.0:12222")
+	}
+
 }
 
 // ファイルをコピーする関数
