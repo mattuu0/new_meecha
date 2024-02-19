@@ -283,7 +283,7 @@ func main() {
 	debug_mode := os.Getenv("DEBUG_MODE")
 
 	//デバッグモード
-	if debug_mode == "false" {
+	if debug_mode == "true" {
 		router.RunTLS("0.0.0.0:12222", "./keys/server.crt", "./keys/server.key") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	} else {
 		router.Run("0.0.0.0:12222")
