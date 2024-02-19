@@ -18,7 +18,7 @@ func Init_user_data(uid string) error {
 	//ユーザデータ初期化
 	user_data := database.User_Data{
 		UID: uid,
-		Distance: 50,
+		Distance: 5000,
 		Status: "Offline",
 	}
 
