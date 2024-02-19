@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"meecha/auth"
+	"meecha/database"
+	"meecha/friends"
 	"net/http"
 	"strconv"
 	"strings"
-
 
 	"github.com/joho/godotenv"
 )
@@ -41,11 +43,22 @@ func main() {
 	//環境変数読み込み
 	loadEnv()
 
+	database.Init()
+	auth.Init()
+	friends.Init()
+
+	main_user, err := auth.Login("wao", "password")
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	//1000回ループ
-	for i := 0; i < 100000; i++ {
+	for i := 0; i < 28; i++ {
 		log.Println("test" + strconv.Itoa(i))
 
-		if true {
+		if false {
 			url := "https://wao2server.tail6cf7b.ts.net/meecha/auth/signup"
 
 			payload := strings.NewReader("{\n  \"name\" : \"" + "test" + strconv.Itoa(i) + "\",\n  \"password\" : \"password\"\n}")
@@ -65,23 +78,25 @@ func main() {
 			fmt.Println(string(body))
 
 			/*
-			user, err := auth.Login("test"+strconv.Itoa(i), "password")
 
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
-			fid, err := friends.Record_Friends(user.Userid, "0f11d95c-a600-4ca5-9bd4-9248b5dba35b")
-
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
-			log.Println(fid)
-			*/
+			 */
 		}
+
+		user, err := auth.Login("test"+strconv.Itoa(i), "password")
+
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		fid, err := friends.Record_Friends(user.Userid, main_user.Userid)
+
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		log.Println(fid)
 	}
 
 }
