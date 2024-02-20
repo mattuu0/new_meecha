@@ -23,7 +23,17 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
+	"github.com/JGLTechnologies/gin-rate-limit"
 )
+
+func keyFunc(c *gin.Context) string {
+	return c.ClientIP()
+}
+
+func errorHandler(c *gin.Context, info ratelimit.Info) {
+	c.String(429, "Too many requests. Try again in "+time.Until(info.ResetTime).String())
+}
 
 var (
 	//デフォルトアイコン
@@ -82,6 +92,25 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	
+	store := ratelimit.RedisStore(&ratelimit.RedisOptions{
+		RedisClient: redis.NewClient(&redis.Options{
+			Addr:     "redis:6379",
+			Password: "", // no password set
+			DB:       7,  // use default DB
+			PoolSize: 1000,
+		}),
+		Rate:  time.Second,
+		Limit: 5,
+	})
+
+	mw := ratelimit.RateLimiter(store, &ratelimit.Options{
+		ErrorHandler: errorHandler,
+		KeyFunc: keyFunc,
+	})
+
+	router.Use(mw)
 
 	//フォルダ開く
 	Icons, err := os.Open(IconDir)
