@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"io"
+	"strconv"
 
 	"log"
 
@@ -22,9 +23,9 @@ import (
 
 	"github.com/gorilla/websocket"
 
+	"github.com/JGLTechnologies/gin-rate-limit"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
-	"github.com/JGLTechnologies/gin-rate-limit"
 )
 
 func keyFunc(c *gin.Context) string {
@@ -93,7 +94,15 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	
+	rate_limit,err := strconv.Atoi(os.Getenv("RateSec"))
+
+	//エラー処理
+	if err != nil {
+		log.Println("無効なレート制限です")
+		return
+	}
+
+	//レート制限
 	store := ratelimit.RedisStore(&ratelimit.RedisOptions{
 		RedisClient: redis.NewClient(&redis.Options{
 			Addr:     "redis:6379",
@@ -102,7 +111,7 @@ func main() {
 			PoolSize: 1000,
 		}),
 		Rate:  time.Second,
-		Limit: 5,
+		Limit: uint(rate_limit),
 	})
 
 	mw := ratelimit.RateLimiter(store, &ratelimit.Options{

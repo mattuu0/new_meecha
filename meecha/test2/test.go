@@ -70,6 +70,7 @@ func main() {
 			scanner.Text()
 		}
 
+		time.Sleep(time.Duration(200) * time.Microsecond)
 		now_count++
 		go send_location(i)
 	}
