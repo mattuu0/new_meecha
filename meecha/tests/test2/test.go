@@ -50,7 +50,6 @@ func random(min, max float64) float64 {
 	return rand.Float64()*(max-min) + min
 }
 
-
 var (
 	now_count int64 = 0
 )
@@ -62,7 +61,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	//1000000人のユーザを作成
 	for i := 0; i < 20000; i++ {
-		if i%100 == 0 {
+		if i%50 == 0 {
 			log.Println(now_count)
 			log.Println(i)
 			log.Println("wait key")
@@ -70,10 +69,16 @@ func main() {
 			scanner.Text()
 		}
 
-		time.Sleep(time.Duration(200) * time.Microsecond)
+		time.Sleep(time.Duration(200) * time.Millisecond)
+		log.Println(now_count)
 		now_count++
 		go send_location(i)
 	}
+
+	log.Println(now_count)
+	log.Println("wait key")
+	scanner.Scan()
+	scanner.Text()
 
 	log.Println(login("wao", "password"))
 }
@@ -86,7 +91,7 @@ type Response struct {
 
 // https://wao2server.tail6cf7b.ts.net:13333/static/meecha/index.html
 func login(uname, password string) string {
-	url := "https://wao2server.tail6cf7b.ts.net:13333/meecha/auth/login"
+	url := "https://wao2server.tail6cf7b.ts.net/meecha/auth/login"
 
 	payload := strings.NewReader("{\n  \"name\" : \"" + uname + "\",\n  \"password\" : \"" + password + "\"\n}")
 
@@ -130,7 +135,7 @@ func send_location(loginid int) {
 
 	atoken := login("test"+strconv.Itoa(loginid), "password")
 
-	wsurl := url.URL{Scheme: "wss", Host: "wao2server.tail6cf7b.ts.net:13333", Path: "/meecha/ws"}
+	wsurl := url.URL{Scheme: "wss", Host: "wao2server.tail6cf7b.ts.net", Path: "/meecha/ws"}
 	//log.Printf("connecting to %s", wsurl.String())
 
 	dialer := websocket.Dialer{

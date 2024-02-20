@@ -11,10 +11,12 @@ services:
         depends_on:
             - redis
             - postgresql
+
     redis:
         image: "redis:latest"
         ports:
             - "6379:6379"
+            
     postgresql:
         image: postgres:12.18-bullseye
         environment:
