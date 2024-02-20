@@ -16,3 +16,4 @@ EXPO.md
 /postgresql
 
 .env
+meecha/.vscode/launch.json

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -31,7 +32,9 @@ type ResponseMessage struct {
 
 func Send_ws(uid string, command string, payload interface{}) error {
 	//接続されていなかったらエラーを返す
-	if wsconns[uid] == nil {
+	_, ok := wsconns.Load(uid)
+
+	if !ok {
 		return errors.New("not connected")
 	}
 
@@ -42,7 +45,14 @@ func Send_ws(uid string, command string, payload interface{}) error {
 	}
 
 	//書き込み
-	err := wsconns[uid].WriteJSON(write_data)
+	val, ok := wsconns.Load(uid)
+
+	if !ok {
+		return errors.New("not connected")
+	}
+	wsconn := val.(*websocket.Conn)
+
+	err := wsconn.WriteJSON(write_data)
 
 	//エラー処理
 	if err != nil {
@@ -63,9 +73,15 @@ func ws_disconnect(uid string) {
 
 	location.Disable_Geo_Token(uid)
 	//Websocket接続を閉じる
-	wsconns[uid].Close()
+	val, ok := wsconns.Load(uid)
+
+	if !ok {
+		return
+	}
+	wsconn := val.(*websocket.Conn)
+	wsconn.Close()
 	//Websocket接続削除
-	delete(wsconns, uid)
+	wsconns.Delete(uid)
 }
 
 // Websocket 関数
@@ -83,7 +99,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 		location.RemoveLocation(userid)
 
 		//Websocket接続削除
-		delete(wsconns, userid)
+		wsconns.Delete(userid)
 
 		//接続を閉じる
 		wsconn.Close()
@@ -120,7 +136,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 	go send_location_token(wsconn, userid)
 
 	//通知者一覧
-	notify_dict := map[string]string{}
+	notify_dict := sync.Map{} //map[string]string{}
 
 	for {
 		//メッセージ
@@ -180,11 +196,10 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 
 			//エラー処理
 			if err != nil {
-				for key := range notify_dict {
-					if _, ok := notify_dict[key]; ok {
-						stop_notify(notify_dict, key, userid)
-					}
-				}
+				notify_dict.Range(func(key, value interface{}) bool {
+					stop_notify(notify_dict, key.(string), userid)
+					return true
+				})
 
 				log.Println(err)
 				continue
@@ -193,11 +208,10 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 			//除外エリアに入っている場合
 			if !result {
 				//全フレンドに通知
-				for key := range notify_dict {
-					if _, ok := notify_dict[key]; ok {
-						stop_notify(notify_dict, key, userid)
-					}
-				}
+				notify_dict.Range(func(key, value interface{}) bool {
+					stop_notify(notify_dict, key.(string), userid)
+					return true
+				})
 
 				log.Println("除外エリアです")
 				//戻る
@@ -230,7 +244,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//エラー処理
 				if err != nil {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					log.Println(err)
@@ -243,7 +258,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//エラー処理
 				if err != nil {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					log.Println(err)
@@ -253,7 +269,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//除外範囲にいる場合
 				if !result {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					continue
@@ -265,7 +282,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//エラー処理
 				if err != nil {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					log.Println(err)
@@ -278,7 +296,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//エラー処理
 				if err != nil {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					log.Println(err)
@@ -300,13 +319,14 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//距離検証
 				if distance > check_distance {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					//距離より大きい場合
 					continue
 				}
-				
+
 				log.Println(check_distance)
 				log.Println(distance)
 
@@ -317,7 +337,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				is_first := false
 
 				//初回か判定
-				if _, ok := notify_dict[val]; !ok {
+				_, isok := notify_dict.Load(val)
+				if !isok {
 					is_first = true
 				}
 
@@ -336,7 +357,8 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				//エラー処理
 				if err != nil {
 					//離れたことを通知
-					if _, ok := notify_dict[val]; ok {
+					_, isok := notify_dict.Load(val)
+					if isok {
 						stop_notify(notify_dict, val, userid)
 					}
 					log.Println(err)
@@ -353,7 +375,7 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 				})
 
 				//通知者に設定
-				notify_dict[val] = ""
+				notify_dict.Store(val, "")
 			}
 		}
 	}
@@ -377,16 +399,15 @@ func handle_ws(wsconn *websocket.Conn, userid string) {
 	location.RemoveLocation(userid)
 
 	//切断通知
-	for key := range notify_dict {
-		if _, ok := notify_dict[key]; ok {
-			stop_notify(notify_dict, key, userid)
-		}
-	}
+	notify_dict.Range(func(key, value interface{}) bool {
+		stop_notify(notify_dict, key.(string), userid)
+		return true
+	})
 }
 
-func stop_notify(notify_dict map[string]string, uid string, myid string) {
+func stop_notify(notify_dict sync.Map, uid string, myid string) {
 	//通知削除
-	delete(notify_dict, uid)
+	notify_dict.Delete(uid)
 
 	Send_ws(uid, "stop_notify", map[string]string{
 		"userid": myid,

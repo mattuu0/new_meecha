@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"sync"
 
 	"log"
 
@@ -12,7 +13,6 @@ import (
 	"time"
 
 	"meecha/auth"
-	"meecha/database"
 	"meecha/friends"
 	"meecha/location"
 
@@ -21,7 +21,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 
-	"github.com/gorilla/websocket"
 
 	"github.com/JGLTechnologies/gin-rate-limit"
 	"github.com/joho/godotenv"
@@ -43,9 +42,7 @@ var (
 	IconDir string = "./UserIcons"
 
 	//ウェブソケット
-	wsconns = make(map[string]*websocket.Conn)
-
-	dbconn *gorm.DB = nil
+	wsconns = sync.Map{} // make(map[string]*websocket.Conn)
 )
 
 func getFileNameWithoutExt(path string) string {
@@ -63,11 +60,6 @@ func loadEnv() {
 func main() {
 	//環境変数読み込み
 	loadEnv()
-
-	//データベース初期化
-	database.Init()
-
-	dbconn = database.GetDB()
 
 	//認証初期化
 	auth.Init()
@@ -297,7 +289,7 @@ func main() {
 				userid = auth_result.Userid
 
 				//接続を追加
-				wsconns[auth_result.Userid] = wsconn
+				wsconns.Store(auth_result.Userid, wsconn)
 				ws_contiune = true
 
 				//抜ける
