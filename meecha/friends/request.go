@@ -24,21 +24,30 @@ func Send(Sender_id string, Receiver_id string) (string, error) {
 	}
 
 	//ネームトークンフィルター
-	named_filter := database.Sent{}
+	Sent_filter := database.Sent{}
+	Friend_filter := database.Friends{}
 
 	//自分にフレンドを送った場合
 	if Sender_id == Receiver_id {
 		return "", errors.New("send_to_myself")
 	}
 
-	//既に存在していたら1、存在していなかったら0を代入(and)
-	Sender := dbconn.Where(database.Sent{Sender_id: Sender_id}).Where(database.Sent{Receiver_id: Receiver_id}).First(&named_filter).RowsAffected
-	//既に存在していたら1、存在していなかったら0を代入(and)(逆)
-	Receiver := dbconn.Where(database.Sent{Sender_id: Receiver_id}).Where(database.Sent{Receiver_id: Sender_id}).First(&named_filter).RowsAffected
+	//既にリクエストが存在していたら1、存在していなかったら0を代入(and)
+	request := dbconn.Where(database.Sent{Sender_id: Sender_id,Receiver_id: Receiver_id}).Or(database.Sent{Sender_id: Receiver_id,Receiver_id: Sender_id}).First(&Sent_filter).RowsAffected
+	//既にフレンドなら1、フレンドでなかったら0を代入(and)
+	friend := dbconn.Where(database.Friends{Sender_id: Sender_id,Receiver_id: Receiver_id}).Or(database.Friends{Sender_id: Receiver_id,Receiver_id: Sender_id}).First(&Friend_filter).RowsAffected
+		
+	println(request)
+	println(friend)
 
 	//既に存在している場合
-	if Sender+Receiver != 0 {
+	if request != 0 {
 		return "", errors.New("request_is_already_existing")
+	}
+
+	//既にフレンドです
+	if friend != 0 {
+		return "", errors.New("already_friends")
 	}
 
 	//データベースに書き込む
