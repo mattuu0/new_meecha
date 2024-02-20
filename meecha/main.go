@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"meecha/auth"
+	"meecha/database"
 	"meecha/friends"
 	"meecha/location"
 
@@ -21,8 +22,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 
-
-	"github.com/JGLTechnologies/gin-rate-limit"
+	ratelimit "github.com/JGLTechnologies/gin-rate-limit"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
@@ -43,6 +43,7 @@ var (
 
 	//ウェブソケット
 	wsconns = sync.Map{} // make(map[string]*websocket.Conn)
+
 )
 
 func getFileNameWithoutExt(path string) string {
@@ -60,6 +61,9 @@ func loadEnv() {
 func main() {
 	//環境変数読み込み
 	loadEnv()
+
+	//データベース初期化
+	database.Init()
 
 	//認証初期化
 	auth.Init()
@@ -86,7 +90,7 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	rate_limit,err := strconv.Atoi(os.Getenv("RateSec"))
+	rate_limit, err := strconv.Atoi(os.Getenv("RateSec"))
 
 	//エラー処理
 	if err != nil {
@@ -94,12 +98,13 @@ func main() {
 		return
 	}
 
+	log.Println(os.Getenv("RedisUrl"))
 	//レート制限
 	store := ratelimit.RedisStore(&ratelimit.RedisOptions{
 		RedisClient: redis.NewClient(&redis.Options{
-			Addr:     "redis:6379",
-			Password: "", // no password set
-			DB:       7,  // use default DB
+			Addr:     os.Getenv("RedisUrl"),
+			Password: os.Getenv("RedisPass"), // no password set
+			DB:       7,                      // use default DB
 			PoolSize: 1000,
 		}),
 		Rate:  time.Second,
@@ -108,10 +113,11 @@ func main() {
 
 	mw := ratelimit.RateLimiter(store, &ratelimit.Options{
 		ErrorHandler: errorHandler,
-		KeyFunc: keyFunc,
+		KeyFunc:      keyFunc,
 	})
 
-	router.Use(mw)
+	_ = mw
+	//router.Use(mw)
 
 	//フォルダ開く
 	Icons, err := os.Open(IconDir)
