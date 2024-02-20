@@ -140,6 +140,12 @@ func Get_Token_ByUID(uid string) (string, error) {
 
 //トークン無効か
 func Disable_Geo_Token(uid string) error {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	
 	//トークン削除
 	token_rdb.Del(context.Background(),uid)
 
