@@ -32,6 +32,7 @@ var (
 	TokenExp time.Duration = time.Duration(5) * time.Second
 )
 
+
 // 初期化
 func Init(token string) error {
 	//データベースが初期化されているか
