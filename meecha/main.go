@@ -20,8 +20,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/gin-contrib/cors"
-
 	ratelimit "github.com/JGLTechnologies/gin-rate-limit"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -77,18 +75,18 @@ func main() {
 
 	router := gin.Default()
 
-	//すべてのオリジンを承認
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"PUT", "PATCH"},
-		AllowHeaders:     []string{"*"},
-		ExposeHeaders:    []string{"*"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return true
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	// //すべてのオリジンを承認
+	// router.Use(cors.New(cors.Config{
+	// 	AllowOrigins:     []string{"*"},
+	// 	AllowMethods:     []string{"PUT", "PATCH"},
+	// 	AllowHeaders:     []string{"*"},
+	// 	ExposeHeaders:    []string{"*"},
+	// 	AllowCredentials: true,
+	// 	AllowOriginFunc: func(origin string) bool {
+	// 		return true
+	// 	},
+	// 	MaxAge: 12 * time.Hour,
+	// }))
 
 	rate_limit, err := strconv.Atoi(os.Getenv("RateSec"))
 

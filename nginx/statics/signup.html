@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta http-equiv="content-type" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meecha</title>
+
+    <link rel="stylesheet" href="./styles/base.css">
+</head>
+
+<body>
+    <header>
+		<a href="/static/meecha/index.html">
+			<img src="./images/meecha.png" alt="" id="rogo">
+		</a>
+
+		<div id="navbarSupportedContent">
+			<ul>
+				<li>
+					<a href="./login.html">ログイン</a>
+				</li>
+				<li>
+					<a href="./signup.html">ユーザ登録</a>
+				</li>
+			</ul>
+		</div>
+
+	</header>
+
+    <main>
+        <h1>ユーザ登録</h1>
+        <form  id="signup_form" class="form">
+            <div>
+                <label for="id_username">ユーザー名</label>
+                <input  class="box input" type="text" name="username" placeholder="ユーザー名" autocomplete="username" minlength="1" maxlength="150" required="" id="id_username">
+            </div>
+            <div>
+                <label for="id_password1">パスワード</label>
+                <input  class="box input" type="password" name="password1" placeholder="パスワード" autocomplete="new-password" required="" id="id_password1">
+            </div>
+            <div>
+                <label for="id_password2">パスワード(確認用)</label>
+                <input  class="box input" type="password" name="password2" placeholder="パスワード(確認用)" autocomplete="new-password" required="" id="id_password2">
+            </div>
+            <div >
+                <button  class="box" type="submit">
+                    ユーザ登録
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script src="./scripts/config.js"></script>
+    <script src="./scripts/auth/util.js"></script>
+    <script src="./scripts/auth/login.js"></script>
+    <script src="./scripts/auth/signup.js"></script>
+    <script src="./scripts/auth/signup_main.js"></script>
+</body>
+
+</html>

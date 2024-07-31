@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Zen+Maru+Gothic:wght@700&display=swap');
+
+body {
+    margin: 0;
+    color: #00525f;
+    background-color: #f0fffa;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 1em;
+}
+
+header{
+    display: flex;
+    height: 8vh;
+    z-index: 100;
+}
+
+header p{
+    margin: 0;
+}
+
+#rogo_bg{
+    margin-top: 3vh;
+    margin-left: 7vw;
+}
+
+#rogo {
+    margin: auto;
+    width: 100px;
+}
+
+#setting_img {
+    border-radius: 40px;
+    position: fixed;
+    width: 13vw;
+    top: 1.5vh;
+    right: 7vw;
+    z-index: 1;
+}
+
+.button_radius {
+    display: flex;
+    width: 100px;
+    height: 30px;
+    border-radius: 8px;
+    margin: 5px 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+#user_info {
+    position: fixed;
+    bottom: 3vh;
+    left: 7vw;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
+
+#user_info img {
+    max-width: 20vw;
+    border-radius: 50%;
+}
+
+.user_search_area {
+    display: flex;
+    justify-content: center;
+}
+
+.map_area {
+    width: 100vw;
+    height: 92vh;
+    z-index: 1;
+}
+
+#pin{
+    position: fixed;
+    right: 6vw;
+    bottom: 3vh;
+    width: 16vw;
+    z-index: 1;
+}
+
+.popover {
+    width: 60vw;
+    height: 60vh;
+    background-color: rgba(233, 254, 247, 0.937);
+    border: 2px solid #5da38ccc;
+    border-radius: 10px;
+}
+
+.MapIcon {
+    border-radius: 50%;
+}

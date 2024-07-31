@@ -1,0 +1,33 @@
+/* ポップアップ */
+.popup {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.popup_inner {
+    position: fixed;
+    left: 10vw;
+    top: 15vh;
+}
+
+.popup.is-show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popover{
+    width: 80vw;
+    height: 65vh;
+    background-color: #e9fef7ef;
+    border: 2px solid #5da38ccc;
+    border-radius: 10px;
+    text-align: center;
+    overflow: scroll;
+}
+

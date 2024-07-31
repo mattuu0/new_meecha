@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                //成功時のコールバック関数
+                //位置情報
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                console.log(latitude, longitude);
+            },
+            (error) => {
+                //失敗時のコールバック関数
+                console.log(error);
+            },
+            //位置情報監視設定
+            {
+                enableHighAccuracy: true
+            }
+        );
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+.data_area{
+    border-bottom: 2px dashed #5da38ccc;
+    padding: 10px;
+}
+
+.accept_request_btn {
+    border-bottom: 2px solid #5da38ccc;
+    margin-right: 20px;
+}
+
+.reject_request_btn{
+    border-bottom: 2px solid #5da38ccc;
+    margin-left: 20px;
+}
+
+.friend_btn {
+    border-bottom: 2px solid #5da38ccc;
+}
+
+.friend_data_area{
+    justify-content:space-around;
+    display: flex;
+    border-bottom: 2px dashed #5da38ccc;
+    padding: 10px;
+}
+
+.request_data_area{
+    justify-content:space-around;
+    display: flex;
+    border-bottom: 2px dashed #5da38ccc;
+    padding: 10px;
+}
+
+.user_icon{
+    width: 50px;
+    border-radius: 50%;
+}
