@@ -43,12 +43,14 @@ async function TokenPost(posturl,body,token,headers,seriarize = true) {
         body_data = JSON.stringify(body);
     }
 
+    console.log(headers);
+
     //トークンを設定
     headers["Authorization"] = token;
     //リクエストを飛ばす
     const req = await fetch(posturl,{
         method: "POST",
-        headers,
+        headers: headers,
         body: body_data
     })
 

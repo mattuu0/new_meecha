@@ -61,9 +61,50 @@ func get_friends(ctx *gin.Context) {
 }
 
 // ユーザ検索
+// func search_user(ctx *gin.Context) {
+// 	//ユーザ名
+// 	user_name := ctx.GetHeader("username")
+
+// 	log.Println(user_name)
+// 	//ユーザを検索
+// 	result, err := auth.GetUser_ByName(user_name)
+
+// 	//エラー処理
+// 	if err != nil {
+// 		log.Println(err)
+// 		ctx.AbortWithStatus(500)
+// 		return
+// 	}
+
+// 	//ユーザが見つからない場合
+// 	if !result.IsFind {
+// 		ctx.AbortWithStatus(404)
+// 		return
+// 	}
+
+// 	result_data := map[string]string{}
+// 	result_data["uid"] = result.UserData.UID
+// 	result_data["name"] = result.UserData.Name
+
+// 	//データ返却
+// 	ctx.JSON(200, result_data)
+// }
+
+type SearchData struct {
+	UserName string
+}
+
 func search_user(ctx *gin.Context) {
+	var data SearchData
+
+	// 値をバインドする
+	if err := ctx.ShouldBind(&data); err != nil {
+		ctx.AbortWithStatus(400)
+	}
+
 	//ユーザ名
-	user_name := ctx.GetHeader("username")
+	// user_name := ctx.GetHeader("username")
+	user_name := data.UserName
 
 	log.Println(user_name)
 	//ユーザを検索

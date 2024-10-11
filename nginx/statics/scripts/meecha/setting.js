@@ -99,7 +99,10 @@ function init(evt) {
     //イベント関連
     async function search_user(evt){
         //検索
-        const req = await AccessPost(friend_search_url,{},{"username":search_value.value});
+        // const req = await AccessPost(friend_search_url,{},{"username":search_value.value});
+        const req = await AccessPost(friend_search_url,{"UserName":search_value.value},{
+            "content-type" : "application/json",
+        });
 
         //200以外
         if (req.status != 200) {

@@ -1,7 +1,7 @@
 //設定ファイル
 
 //サーバIP
-const ServerIp = "localhost:8443/app";
+const ServerIp = "meecha.tail6cf7b.ts.net/app";
 
 //サーバURL
 const server_url = "https://" + ServerIp;
@@ -77,8 +77,10 @@ const get_notify_distance_url = server_url + "/location/get_notify_distance";
 
 //アイコンURL取得
 function GetIconUrl(userid) {
+    // 現在時刻
+    let ntime = new Date(); 
     //アイコンのURLを返す
-    return IconBaseUrl + userid;
+    return IconBaseUrl + userid + "?time=" + ntime.getTime();
 }
 
 //TODO 本番にはfalseで設定する

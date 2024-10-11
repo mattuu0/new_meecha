@@ -26,6 +26,8 @@ async function get_userinfo() {
                 const longitude = position.coords.longitude;
 
                 console.log(latitude, longitude);
+                myself_position[0] = latitude;
+                myself_position[1] = longitude;
 
                 change_location(latitude, longitude);
 

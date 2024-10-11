@@ -10,12 +10,11 @@ var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
 });
 
-/*
-var tileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    attribution: "<a href='https://developers.google.com/maps/documentation' target='_blank'>Google Map</a>",
-});
-*/
+// var tileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+//     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+//     attribution: "<a href='https://developers.google.com/maps/documentation' target='_blank'>Google Map</a>",
+// });
+
 
 //マップに追加
 tileLayer.addTo(main_map);

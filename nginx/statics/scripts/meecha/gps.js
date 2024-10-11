@@ -34,6 +34,7 @@ function success(crd) {
     const latitude = crd.coords.latitude;
     const longitude = crd.coords.longitude;
 
+    console.log(latitude,longitude);
     //自身の位置を更新する
     myself_position[0] = latitude;
     myself_position[1] = longitude;
